@@ -37,6 +37,7 @@ function ms_defaults() {
 		'carriers'        => 'Aramex, DHL',
 		'footer_note'     => 'Good things for your home, in every season.',
 		'arrivals_count'  => 8,
+		'product_notes'   => '1',
 	);
 }
 
@@ -235,6 +236,11 @@ function ms_primary_nav() {
 
 	remove_filter( 'nav_menu_item_id', '__return_empty_string' );
 
+	$current   = ms_current_category_id();
+	$ancestors = $current ? get_ancestors( $current, 'product_cat', 'taxonomy' ) : array();
+	$is_shop   = function_exists( 'is_shop' ) && is_shop() && ! is_search();
+	$newest    = $is_shop && 'date' === get_query_var( 'orderby' );
+
 	echo '<ul class="ms-menu">';
 	foreach ( ms_categories( 7 ) as $term ) {
 		$link = get_term_link( $term );
@@ -243,9 +249,11 @@ function ms_primary_nav() {
 		}
 		$children = ms_categories( 12, $term->term_id );
 		printf(
-			'<li class="menu-item%1$s"><a href="%2$s">%3$s</a>',
+			'<li class="menu-item%1$s%2$s"><a href="%3$s"%4$s>%5$s</a>',
 			$children ? ' menu-item-has-children' : '',
+			ms_current_class( $term->term_id, $current, $ancestors ),
 			esc_url( $link ),
+			$term->term_id === $current ? ' aria-current="page"' : '',
 			esc_html( $term->name )
 		);
 		if ( $children ) {
@@ -255,14 +263,103 @@ function ms_primary_nav() {
 				if ( is_wp_error( $child_link ) ) {
 					continue;
 				}
-				printf( '<li class="menu-item"><a href="%1$s">%2$s</a></li>', esc_url( $child_link ), esc_html( $child->name ) );
+				printf(
+					'<li class="menu-item%1$s"><a href="%2$s"%3$s>%4$s</a></li>',
+					ms_current_class( $child->term_id, $current, $ancestors ),
+					esc_url( $child_link ),
+					$child->term_id === $current ? ' aria-current="page"' : '',
+					esc_html( $child->name )
+				);
 			}
 			echo '</ul>';
 		}
 		echo '</li>';
 	}
-	printf( '<li class="menu-item"><a href="%1$s">%2$s</a></li>', esc_url( ms_new_arrivals_url() ), esc_html__( 'New arrivals', 'maison-square' ) );
-	printf( '<li class="menu-item"><a href="%1$s">%2$s</a></li>', esc_url( ms_shop_url() ), esc_html__( 'Shop all', 'maison-square' ) );
+	printf(
+		'<li class="menu-item%1$s"><a href="%2$s"%3$s>%4$s</a></li>',
+		$newest ? ' current-menu-item' : '',
+		esc_url( ms_new_arrivals_url() ),
+		$newest ? ' aria-current="page"' : '',
+		esc_html__( 'New arrivals', 'maison-square' )
+	);
+	printf(
+		'<li class="menu-item%1$s"><a href="%2$s"%3$s>%4$s</a></li>',
+		$is_shop && ! $newest ? ' current-menu-item' : '',
+		esc_url( ms_shop_url() ),
+		$is_shop && ! $newest ? ' aria-current="page"' : '',
+		esc_html__( 'Shop all', 'maison-square' )
+	);
+	echo '</ul>';
+}
+
+/**
+ * The product category being viewed, or 0.
+ *
+ * @return int
+ */
+function ms_current_category_id() {
+	if ( is_tax( 'product_cat' ) ) {
+		return (int) get_queried_object_id();
+	}
+	return 0;
+}
+
+/**
+ * Menu classes for a category: the one being viewed, or a parent of it.
+ *
+ * @param int   $term_id   Category id.
+ * @param int   $current   Category being viewed.
+ * @param int[] $ancestors Parents of the category being viewed.
+ * @return string Class names, each with a leading space.
+ */
+function ms_current_class( $term_id, $current, $ancestors ) {
+	if ( $term_id === $current ) {
+		return ' current-menu-item';
+	}
+	if ( in_array( $term_id, $ancestors, true ) ) {
+		return ' current-menu-ancestor';
+	}
+	return '';
+}
+
+/**
+ * Print the categories as square chips: a link each, the one being viewed marked.
+ *
+ * @param string $class     List class: ms-catstrip (scrolling row) or ms-chips (wrapping).
+ * @param bool   $with_all  Whether to start with a link to the whole shop.
+ */
+function ms_category_chips( $class = 'ms-chips', $with_all = true ) {
+	$terms = ms_categories( 12 );
+	if ( count( $terms ) < 2 ) {
+		return;
+	}
+
+	$current   = ms_current_category_id();
+	$ancestors = $current ? get_ancestors( $current, 'product_cat', 'taxonomy' ) : array();
+	$is_shop   = function_exists( 'is_shop' ) && is_shop() && ! is_search();
+
+	echo '<ul class="' . esc_attr( $class ) . '">';
+	if ( $with_all ) {
+		printf(
+			'<li><a class="ms-chip" href="%1$s"%2$s>%3$s</a></li>',
+			esc_url( ms_shop_url() ),
+			$is_shop ? ' aria-current="page"' : '',
+			esc_html__( 'All', 'maison-square' )
+		);
+	}
+	foreach ( $terms as $term ) {
+		$link = get_term_link( $term );
+		if ( is_wp_error( $link ) ) {
+			continue;
+		}
+		$here = $term->term_id === $current || in_array( $term->term_id, $ancestors, true );
+		printf(
+			'<li><a class="ms-chip" href="%1$s"%2$s>%3$s</a></li>',
+			esc_url( $link ),
+			$here ? ' aria-current="page"' : '',
+			esc_html( $term->name )
+		);
+	}
 	echo '</ul>';
 }
 

@@ -61,9 +61,28 @@ Maison Square is a Lebanese online home-goods store (things for the home, in eve
 - Templates: `header.php`, `footer.php`, `front-page.php` (banners, categories, new arrivals, reviews), `page.php`, `page-info.php`, `404.php`, `index.php`.
 - `assets/css/main.css` (all styles), `assets/js/main.js` (menu drawer, banner rotation with fade, swipe, pause, reduced motion).
 
-### Deployed file fingerprints
+### File fingerprints
 
-Every file below matches the server. Hash = djb2 variant over JS string chars: `h=5381; for each char: h = ((h*33) ^ code) >>> 0`.
+Hash = djb2 variant over JS string chars: `h=5381; for each char: h = ((h*33) ^ code) >>> 0`.
+
+**Theme 0.2.0 (21 November 2026, in this folder and the zip; NOT yet on the server).** The front-end lift described in `docs/maison-square-site-build.md` under "Theme 0.2.0". Deploy by uploading `maison-square-theme.zip` under Appearance → Themes → Add Theme → Upload Theme and choosing "Replace active with uploaded" (same folder name, so every Customizer setting is kept), or by replacing the files below in the Theme File Editor.
+
+| File | Length | Hash |
+|---|---|---|
+| assets/css/main.css | 53021 | 1343700253 |
+| assets/js/main.js | 9591 | 2904623089 |
+| front-page.php | 11106 | 3156859682 |
+| footer.php | 3503 | 3067407190 |
+| header.php | 5958 | 3336103563 |
+| inc/setup.php | 12306 | 3933963854 |
+| inc/template-tags.php | 19764 | 1743515015 |
+| inc/woocommerce.php | 16450 | 962495932 |
+| inc/customizer.php | 5462 | 3827618324 |
+| inc/banners.php | 5794 | 3873073570 |
+| inc/no-blog.php | 2419 | 761747607 |
+| functions.php | 558 | 1590797929 |
+
+**Theme 0.1.0 (on the server as of 19 November 2026).** Check a server file against this table before overwriting it.
 
 | File | Length | Hash |
 |---|---|---|
@@ -120,7 +139,8 @@ Can be done without the owner:
 - SEO (structured data, sitemap), GA4 through Tag Manager with ecommerce events (the owner must give access).
 - Opt-in email marketing setup.
 - Test that site emails (orders, password reset) are delivered.
-- Theme to-dos: highlight the current category in the default menu; show the category icon (not the plain symbol) for cart items without a photo.
+- Theme to-dos: show the category icon (not the plain symbol) for cart items without a photo. (Highlighting the current category in the default menu is done in 0.2.0.)
+- Deploy theme 0.2.0 (see "File fingerprints"), then check on staging: the search button and the bottom bar on a phone, the category chips on the shop page, the notes under the add-to-cart button, the banner pause button, and the "nothing found" page.
 
 At launch:
 

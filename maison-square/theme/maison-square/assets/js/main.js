@@ -1,5 +1,5 @@
 /**
- * Maison Square: the menu drawer and the home banners.
+ * Maison Square: the menu drawer, the home banners and the product page bar.
  * The banners are the only thing on the page that moves by itself.
  */
 ( function () {
@@ -9,14 +9,23 @@
 	var drawer = doc.getElementById( 'ms-drawer' );
 	var openers = doc.querySelectorAll( '[data-ms-drawer-open]' );
 	var lastFocus = null;
+	var reduced = !! ( window.matchMedia && window.matchMedia( '(prefers-reduced-motion: reduce)' ).matches );
 
 	function each( list, fn ) {
 		Array.prototype.forEach.call( list, fn );
 	}
 
+	function onMedia( query, fn ) {
+		if ( query.addEventListener ) {
+			query.addEventListener( 'change', fn );
+		} else if ( query.addListener ) {
+			query.addListener( fn );
+		}
+	}
+
 	/* Menu drawer ---------------------------------------------------------- */
 
-	function setDrawer( open ) {
+	function setDrawer( open, toSearch ) {
 		if ( ! drawer || drawer.hidden === ! open ) {
 			return;
 		}
@@ -29,9 +38,13 @@
 
 		if ( open ) {
 			lastFocus = doc.activeElement;
-			var close = drawer.querySelector( '[data-ms-drawer-close]' );
-			if ( close ) {
-				close.focus();
+			// The search button in the header opens the drawer on its search field.
+			var target = toSearch ? drawer.querySelector( 'input[type="search"]' ) : null;
+			if ( ! target ) {
+				target = drawer.querySelector( '[data-ms-drawer-close]' );
+			}
+			if ( target ) {
+				target.focus();
 			}
 		} else if ( lastFocus && lastFocus.focus ) {
 			lastFocus.focus();
@@ -48,7 +61,7 @@
 	if ( drawer ) {
 		each( openers, function ( button ) {
 			button.addEventListener( 'click', function () {
-				setDrawer( true );
+				setDrawer( true, button.hasAttribute( 'data-ms-drawer-search' ) );
 			} );
 		} );
 
@@ -86,16 +99,11 @@
 		// The drawer is only for narrow screens: close it when the window grows.
 		if ( window.matchMedia ) {
 			var wide = window.matchMedia( '(min-width: 1024px)' );
-			var onWide = function () {
+			onMedia( wide, function () {
 				if ( wide.matches ) {
 					setDrawer( false );
 				}
-			};
-			if ( wide.addEventListener ) {
-				wide.addEventListener( 'change', onWide );
-			} else if ( wide.addListener ) {
-				wide.addListener( onWide );
-			}
+			} );
 		}
 
 		// Categories with sub-categories open and close inside the drawer.
@@ -131,18 +139,19 @@
 
 	/* Banners ---------------------------------------------------------------
 	   With several banners, the banner moves on by itself until the visitor picks
-	   one. It waits while the pointer or the keyboard is on it, and it stays still
-	   for visitors who ask their device for less motion. */
+	   one or presses pause. It waits while the pointer or the keyboard is on it,
+	   and it stays still for visitors who ask their device for less motion. */
 
 	each( doc.querySelectorAll( '[data-ms-banners]' ), function ( hero ) {
 		var slides = hero.querySelectorAll( '[data-ms-slide]' );
 		var media = hero.querySelectorAll( '[data-ms-media]' );
 		var dots = hero.querySelectorAll( '[data-ms-goto]' );
+		var pause = hero.querySelector( '[data-ms-pause]' );
 		var visual = hero.querySelector( '.ms-hero__visual' );
 		var count = slides.length;
 		var current = 0;
 		var timer = null;
-		var still = !! ( window.matchMedia && window.matchMedia( '(prefers-reduced-motion: reduce)' ).matches );
+		var still = reduced;
 		var startX = 0;
 		var startY = 0;
 
@@ -160,6 +169,18 @@
 			each( dots, function ( dot, index ) {
 				dot.classList.toggle( 'is-active', index === current );
 				dot.setAttribute( 'aria-pressed', index === current ? 'true' : 'false' );
+			} );
+		}
+
+		// The pause button shows what the banners are doing right now.
+		function showState() {
+			if ( ! pause ) {
+				return;
+			}
+			var moving = !! timer;
+			pause.setAttribute( 'aria-pressed', moving ? 'false' : 'true' );
+			each( pause.querySelectorAll( '[data-ms-when]' ), function ( el ) {
+				el.hidden = el.getAttribute( 'data-ms-when' ) !== ( moving ? 'moving' : 'still' );
 			} );
 		}
 
@@ -184,10 +205,12 @@
 				window.clearInterval( timer );
 				timer = null;
 			}
+			showState();
 		}
 
 		function start() {
 			if ( still || timer || count < 2 ) {
+				showState();
 				return;
 			}
 			timer = window.setInterval( function () {
@@ -196,6 +219,7 @@
 					go( next );
 				}
 			}, 6000 );
+			showState();
 		}
 
 		// The visitor chose a banner, so it stays there.
@@ -210,6 +234,18 @@
 				pick( parseInt( dot.getAttribute( 'data-ms-goto' ), 10 ) || 0 );
 			} );
 		} );
+
+		if ( pause ) {
+			pause.addEventListener( 'click', function () {
+				if ( timer ) {
+					still = true;
+					stop();
+				} else {
+					still = false;
+					start();
+				}
+			} );
+		}
 
 		hero.addEventListener( 'mouseenter', stop );
 		hero.addEventListener( 'mouseleave', start );
@@ -240,4 +276,49 @@
 
 		start();
 	} );
+
+	/* Product page bar --------------------------------------------------------
+	   On a phone, a bar with the price and the add-to-cart button shows whenever
+	   the real form is out of sight. Its button presses the real one, or brings
+	   the visitor to the form when a size still has to be chosen. */
+
+	var bar = doc.querySelector( '[data-ms-stickybar]' );
+	var cartForm = doc.querySelector( 'form.cart' );
+
+	if ( bar && cartForm && 'IntersectionObserver' in window && window.matchMedia ) {
+		var narrow = window.matchMedia( '(max-width: 899px)' );
+		var formSeen = true;
+		var barButton = bar.querySelector( 'button' );
+
+		function updateBar() {
+			var on = narrow.matches && ! formSeen;
+			bar.hidden = ! on;
+			doc.body.classList.toggle( 'ms-stickybar-on', on );
+		}
+
+		new IntersectionObserver( function ( entries ) {
+			formSeen = entries[ 0 ].isIntersecting;
+			updateBar();
+		}, { threshold: 0 } ).observe( cartForm );
+
+		onMedia( narrow, updateBar );
+
+		if ( barButton ) {
+			barButton.addEventListener( 'click', function () {
+				var real = cartForm.querySelector( '.single_add_to_cart_button' );
+				var needsChoice = ! real || real.disabled || real.classList.contains( 'disabled' );
+
+				if ( needsChoice ) {
+					cartForm.scrollIntoView( { block: 'center', behavior: reduced ? 'auto' : 'smooth' } );
+					var first = cartForm.querySelector( 'select, input:not([type="hidden"])' );
+					if ( first ) {
+						first.focus( { preventScroll: true } );
+					}
+					return;
+				}
+
+				real.click();
+			} );
+		}
+	}
 }() );

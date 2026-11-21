@@ -7,7 +7,7 @@
 
 defined( 'ABSPATH' ) || exit;
 
-define( 'MS_THEME_VERSION', '0.1.0' );
+define( 'MS_THEME_VERSION', '0.2.0' );
 define( 'MS_THEME_DIR', get_template_directory() );
 define( 'MS_THEME_URI', get_template_directory_uri() );
 

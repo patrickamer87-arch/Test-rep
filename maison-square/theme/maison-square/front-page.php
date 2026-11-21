@@ -65,6 +65,12 @@ $ms_photo = ! empty( $ms_banners[0]['image'] );
 								</span>
 							</button>
 						<?php endforeach; ?>
+						<button type="button" class="ms-hero__pause" data-ms-pause aria-pressed="false">
+							<svg class="ms-icon" data-ms-when="moving" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false"><path d="M6 4h4v16H6zM14 4h4v16h-4z"/></svg>
+							<svg class="ms-icon" data-ms-when="still" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false" hidden><path d="M7 4l13 8-13 8z"/></svg>
+							<span class="screen-reader-text" data-ms-when="moving"><?php esc_html_e( 'Pause the banners', 'maison-square' ); ?></span>
+							<span class="screen-reader-text" data-ms-when="still" hidden><?php esc_html_e( 'Play the banners', 'maison-square' ); ?></span>
+						</button>
 					</div>
 				<?php endif; ?>
 			</div>
@@ -120,7 +126,15 @@ $ms_photo = ! empty( $ms_banners[0]['image'] );
 								<span class="ms-tile__square">
 									<?php
 									if ( $ms_thumb ) {
-										echo wp_get_attachment_image( $ms_thumb, 'ms-square', false, array( 'alt' => '' ) );
+										echo wp_get_attachment_image(
+											$ms_thumb,
+											'ms-square',
+											false,
+											array(
+												'alt'   => '',
+												'sizes' => '(min-width: 720px) 25vw, 50vw',
+											)
+										);
 									} else {
 										echo ms_icon( ms_category_icon( $ms_term ), 48 ); // phpcs:ignore WordPress.Security.EscapeOutput
 									}

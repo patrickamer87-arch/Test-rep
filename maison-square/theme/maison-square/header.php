@@ -58,6 +58,11 @@ $ms_count   = function_exists( 'ms_cart_count_html' ) ? ms_cart_count_html() : '
 				</button>
 			</form>
 
+			<button type="button" class="ms-iconbtn ms-header__search" data-ms-drawer-open data-ms-drawer-search aria-controls="ms-drawer" aria-expanded="false">
+				<?php echo ms_icon( 'search' ); // phpcs:ignore WordPress.Security.EscapeOutput ?>
+				<span class="screen-reader-text"><?php esc_html_e( 'Search products', 'maison-square' ); ?></span>
+			</button>
+
 			<a class="ms-iconbtn ms-header__account" href="<?php echo esc_url( $ms_account ); ?>">
 				<?php echo ms_icon( 'account' ); // phpcs:ignore WordPress.Security.EscapeOutput ?>
 				<span class="screen-reader-text"><?php esc_html_e( 'My account', 'maison-square' ); ?></span>

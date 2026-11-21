@@ -4,7 +4,7 @@ What has been built on https://staging.maisonsquare.com, how to change it, and w
 
 ## Status
 
-- **Theme:** "Maison Square" 0.1.0 is installed and active on staging since 16 November 2026, plus the edits listed under "Theme changes after install". The source zip is on the owner's PC at `Desktop\Maison Square\maison-square-theme.zip` and matches what is on the server (last synced 18 November 2026, 18:25).
+- **Theme:** "Maison Square" 0.1.0 is installed and active on staging since 16 November 2026, plus the edits listed under "Theme changes after install". **Version 0.2.0 (the front-end lift of 21 November 2026, see "Theme 0.2.0") is ready in this folder and in `maison-square-theme.zip`, and waits to be uploaded.**
 - **Shop data, settings, contact details, policy pages, pictures and customer sign-up:** done (see below).
 - **Delivery price by weight in Lebanon:** automatic since 18 November 2026: $5 under 7 kg, $10 from 7 kg (see "Delivery and payment set on staging").
 - **Home banners:** three full-width banners with home-decor photos since 18 November 2026 (see "Home banners").
@@ -137,10 +137,30 @@ Asked by the owner on 18 November 2026 ("put maison square logo instead of wp lo
 - Afternoon (`inc/woocommerce.php`): delivery price by weight (`ms_delivery_by_weight`).
 - Evening (`inc/setup.php`): Maison Square dashboard start screen (`ms_dashboard_setup`, `ms_dashboard_start`, `ms_orders_url`, `ms_dashboard_style`).
 
+### Theme 0.2.0: the front-end lift (21 November 2026, not yet on the server)
+
+Made in Claude Code from a review of staging at 320 to 1440 px against the UI/UX Pro Max guidelines (touch targets, contrast, mobile navigation, dead ends, auto-moving content). Nothing in the brand changed: same colours, type, square corners, yellow frame and line. Before-and-after pictures are in `docs/screenshots`.
+
+What changed, page by page:
+
+- **Header on phones and tablets:** a search button (magnifier) next to the account and cart icons. It opens the menu drawer with the cursor already in the search field. Below 360 px it hides again so the bar fits; the logo is 24 px tall under 420 px and 22 px under 375 px. The top line drops its truck icon under 480 px so the text stays on one line.
+- **Shop, category and search pages:** a row of square category chips ("All", then each category) above the products on phones and tablets, scrolling sideways, the current category filled in ink. Hidden from 1024 px, where the category menu row shows. The result count and the sorting field now sit on one line where there is room.
+- **Current category in the menu:** with the default menu (no custom menu set), the category being viewed is underlined in yellow in the menu row and marked with a yellow bar in the drawer; "Shop all" and "New arrivals" are marked on their own pages.
+- **Nothing found (search with no match, empty category):** instead of WooCommerce's grey notice, a sentence that says what happened, a search field, the categories as chips and a "Shop all" button.
+- **Product page, under the add-to-cart button:** three short notes with brand icons: delivery across Lebanon with the two prices and the weight limit (read from the delivery rule in the theme), free pick-up with the store address (from Contact details), and the payment methods that are switched on (read from WooCommerce, so "Cash on delivery" today, card and Whish once connected). Only for items that need delivery. Switch under Appearance → Customize → Maison Square → Product pages.
+- **Product page on phones and tablets:** a bar along the bottom with the item name, price and an add-to-cart button whenever the real button is out of sight. For an item with sizes and no size chosen yet, the bar's button scrolls back to the size field. The WhatsApp button moves up above the bar. The tab names (Description, Size and weight, Reviews) stay on one line and scroll sideways instead of wrapping.
+- **Home banners:** a pause/play button next to the banner squares, so a visitor can stop the banners moving (an accessibility requirement for anything that moves on its own). The pointer, keyboard and the visitor's choice still pause them as before.
+- **Home page category photos:** the browser now fetches a photo sized for the tile (a quarter of the width on a computer, half on a phone) instead of the 900 px version every time.
+- **Small:** no double-tap delay on links, buttons and fields; on phones narrower than 360 px a long footer link wraps instead of pushing the page wider.
+
+Files: `assets/css/main.css`, `assets/js/main.js`, `header.php`, `front-page.php`, `inc/template-tags.php`, `inc/customizer.php`, `inc/woocommerce.php`, `functions.php` and `style.css` (version 0.2.0). The delivery prices ($5 under 7 kg, $10 from 7 kg) are now named once at the top of `inc/woocommerce.php` and used by both the delivery rule and the product notes.
+
+To deploy: Appearance → Themes → Add Theme → Upload Theme → `maison-square-theme.zip` → "Replace active with uploaded". Settings are kept because the folder name is unchanged.
+
 ### Small things to tidy in the next theme version
 
-- Highlight the current category in the menu when no custom menu is set.
 - In the cart, an item without a photo shows the plain brand symbol instead of its category icon.
+- On a 375 px phone the result count and the sorting field still take two lines on the shop page (one line from about 600 px).
 
 ## Customer accounts
 

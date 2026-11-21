@@ -39,7 +39,19 @@ function ms_customizer_fields() {
 		'payments'        => array( 'ms_footer', __( 'We accept (separate with commas)', 'maison-square' ), 'text', __( 'Visa, Mastercard, American Express, Google Pay, Apple Pay and Cash on delivery get a picture automatically. For any other name, upload its logo to Media as a picture named logo- plus the name, for example logo-whish.png. Every name is shown as a card of the same size; a picture 192 wide and 120 high fills it exactly.', 'maison-square' ) ),
 		'carriers'        => array( 'ms_footer', __( 'We ship with (separate with commas)', 'maison-square' ), 'text', __( 'To show a logo instead of a name, upload it to Media as a picture named logo- plus the name, for example logo-aramex.png or logo-dhl.png. A picture 192 wide and 120 high fills the card exactly.', 'maison-square' ) ),
 		'footer_note'     => array( 'ms_footer', __( 'Line under the footer logo', 'maison-square' ), 'text' ),
+
+		'product_notes'   => array( 'ms_product', __( 'Show delivery, pick-up and payment notes under the add-to-cart button', 'maison-square' ), 'checkbox', __( 'The delivery price comes from the delivery rule, the pick-up line from the store address, and the payment line from the payment methods that are switched on.', 'maison-square' ) ),
 	);
+}
+
+/**
+ * A checkbox is stored as "1" or nothing.
+ *
+ * @param mixed $value Submitted value.
+ * @return string
+ */
+function ms_sanitize_checkbox( $value ) {
+	return $value ? '1' : '';
 }
 
 /**
@@ -58,6 +70,8 @@ function ms_customizer_sanitizer( $type ) {
 			return 'sanitize_email';
 		case 'number':
 			return 'absint';
+		case 'checkbox':
+			return 'ms_sanitize_checkbox';
 		default:
 			return 'sanitize_text_field';
 	}
@@ -81,6 +95,7 @@ function ms_customize_register( $wp_customize ) {
 		'ms_home'    => __( 'Home page', 'maison-square' ),
 		'ms_contact' => __( 'Contact details and social links', 'maison-square' ),
 		'ms_footer'  => __( 'Footer: payment and delivery', 'maison-square' ),
+		'ms_product' => __( 'Product pages', 'maison-square' ),
 	);
 	foreach ( $sections as $id => $title ) {
 		$wp_customize->add_section(

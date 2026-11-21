@@ -32,6 +32,14 @@ function ms_woo_setup() {
 add_action( 'after_setup_theme', 'ms_woo_setup' );
 
 /**
+ * Delivery inside Lebanon: one price under the weight limit, another from it.
+ * Used by the delivery rule and by the notes on the product page.
+ */
+define( 'MS_DELIVERY_KG', 7 );
+define( 'MS_DELIVERY_LIGHT', 5 );
+define( 'MS_DELIVERY_HEAVY', 10 );
+
+/**
  * Replace WooCommerce's page wrappers with the theme's, and drop the sidebar.
  */
 function ms_woo_layout_hooks() {
@@ -41,8 +49,155 @@ function ms_woo_layout_hooks() {
 
 	add_action( 'woocommerce_before_main_content', 'ms_woo_wrapper_start', 10 );
 	add_action( 'woocommerce_after_main_content', 'ms_woo_wrapper_end', 10 );
+
+	// Above the product grid: the category chips, then the result count and sorting on one line.
+	add_action( 'woocommerce_before_shop_loop', 'ms_woo_category_strip', 10 );
+	add_action( 'woocommerce_before_shop_loop', 'ms_woo_toolbar_start', 15 );
+	add_action( 'woocommerce_before_shop_loop', 'ms_woo_toolbar_end', 35 );
+
+	// Nothing found: a way forward instead of a dead end.
+	remove_action( 'woocommerce_no_products_found', 'wc_no_products_found', 10 );
+	add_action( 'woocommerce_no_products_found', 'ms_woo_no_products_found', 10 );
+
+	// Product page: notes under the add-to-cart button, and the bar on phones.
+	add_action( 'woocommerce_single_product_summary', 'ms_woo_product_notes', 35 );
+	add_action( 'woocommerce_after_single_product', 'ms_woo_sticky_bar', 5 );
 }
 add_action( 'init', 'ms_woo_layout_hooks', 20 );
+
+/**
+ * The category chips above the shop, category and search results.
+ */
+function ms_woo_category_strip() {
+	if ( is_shop() || is_product_taxonomy() || is_search() ) {
+		ms_category_chips( 'ms-catstrip', true );
+	}
+}
+
+/**
+ * Open the line that holds the result count and the sorting field.
+ */
+function ms_woo_toolbar_start() {
+	echo '<div class="ms-toolbar">';
+}
+
+/**
+ * Close it.
+ */
+function ms_woo_toolbar_end() {
+	echo '</div>';
+}
+
+/**
+ * Shown when a search or a category has no products: what happened, a search
+ * field, the categories, and the whole shop.
+ */
+function ms_woo_no_products_found() {
+	echo '<div class="ms-noresults">';
+
+	if ( is_search() ) {
+		printf(
+			'<p class="ms-lead">%s</p>',
+			sprintf(
+				/* translators: %s: what was searched for */
+				esc_html__( 'Nothing matched “%s”. Try another word, or browse by category.', 'maison-square' ),
+				esc_html( get_search_query() )
+			)
+		);
+	} else {
+		printf( '<p class="ms-lead">%s</p>', esc_html__( 'Nothing here yet. Browse by category, or see the whole shop.', 'maison-square' ) );
+	}
+
+	ms_search_form( 'ms-search-noresults' );
+	ms_category_chips( 'ms-chips', false );
+
+	printf(
+		'<p class="ms-actions"><a class="ms-button" href="%1$s">%2$s</a></p>',
+		esc_url( ms_shop_url() ),
+		esc_html__( 'Shop all', 'maison-square' )
+	);
+
+	echo '</div>';
+}
+
+/**
+ * Delivery, pick-up and payment notes under the add-to-cart button. Every line
+ * comes from the shop's own settings, so it stays true as they change.
+ */
+function ms_woo_product_notes() {
+	global $product;
+
+	if ( '1' !== (string) ms_opt( 'product_notes' ) || ! $product instanceof WC_Product || ! $product->is_purchasable() ) {
+		return;
+	}
+
+	$lines = array();
+
+	if ( $product->needs_shipping() ) {
+		$lines[] = array(
+			'delivery',
+			sprintf(
+				/* translators: 1: price under the limit, 2: price from the limit, 3: weight limit in kg */
+				__( '<strong>Delivery across Lebanon</strong>: %1$s for orders under %3$s kg, %2$s from %3$s kg.', 'maison-square' ),
+				wp_strip_all_tags( wc_price( MS_DELIVERY_LIGHT ) ),
+				wp_strip_all_tags( wc_price( MS_DELIVERY_HEAVY ) ),
+				MS_DELIVERY_KG
+			),
+		);
+
+		$address = trim( (string) ms_opt( 'address' ) );
+		$lines[] = array(
+			'location',
+			'' !== $address
+				/* translators: %s: store address */
+				? sprintf( __( '<strong>Free pick-up</strong> from our store, %s.', 'maison-square' ), esc_html( $address ) )
+				: __( '<strong>Free pick-up</strong> from our store.', 'maison-square' ),
+		);
+	}
+
+	$names = array();
+	if ( WC()->payment_gateways() ) {
+		foreach ( WC()->payment_gateways()->get_available_payment_gateways() as $gateway ) {
+			$names[] = wp_strip_all_tags( $gateway->get_title() );
+		}
+	}
+	if ( $names ) {
+		$lines[] = array(
+			'payment',
+			/* translators: %s: list of payment methods */
+			sprintf( __( '<strong>Pay by</strong> %s.', 'maison-square' ), esc_html( implode( ', ', $names ) ) ),
+		);
+	}
+
+	if ( ! $lines ) {
+		return;
+	}
+
+	echo '<ul class="ms-assure">';
+	foreach ( $lines as $line ) {
+		echo '<li>' . ms_icon( $line[0], 20 ) . '<span>' . wp_kses( $line[1], array( 'strong' => array() ) ) . '</span></li>'; // phpcs:ignore WordPress.Security.EscapeOutput
+	}
+	echo '</ul>';
+}
+
+/**
+ * The bar at the bottom of a product page on phones and tablets: name, price and
+ * an add-to-cart button that works the real form (see main.js).
+ */
+function ms_woo_sticky_bar() {
+	global $product;
+
+	if ( ! $product instanceof WC_Product || ! $product->is_purchasable() || ! $product->is_in_stock() ) {
+		return;
+	}
+
+	printf(
+		'<div class="ms-stickybar" data-ms-stickybar hidden><div class="ms-stickybar__info"><span class="ms-stickybar__name">%1$s</span><span class="ms-stickybar__price">%2$s</span></div><button type="button" class="ms-button">%3$s</button></div>',
+		esc_html( $product->get_name() ),
+		wp_kses_post( $product->get_price_html() ),
+		esc_html( $product->single_add_to_cart_text() )
+	);
+}
 
 /**
  * Open the shop page wrapper.
@@ -385,7 +540,7 @@ function ms_delivery_by_weight( $rates, $package ) {
 
 	foreach ( $rates as $rate ) {
 		if ( 'flat_rate' === $rate->get_method_id() && 2 === (int) $rate->get_instance_id() ) {
-			$rate->set_cost( $weight >= 7 ? 10 : 5 );
+			$rate->set_cost( $weight >= MS_DELIVERY_KG ? MS_DELIVERY_HEAVY : MS_DELIVERY_LIGHT );
 			$rate->set_taxes( array() );
 		}
 	}

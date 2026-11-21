@@ -137,6 +137,15 @@ a:hover {
 	text-decoration-thickness: 3px;
 }
 
+/* No double-tap delay on anything that can be tapped. */
+a,
+button,
+input,
+select,
+label {
+	touch-action: manipulation;
+}
+
 strong,
 b {
 	font-weight: 600;
@@ -417,6 +426,11 @@ body.ms-site .button[disabled] {
 	.ms-topbar {
 		font-size: 13px;
 	}
+
+	/* The words fit on one line once the icon steps aside. */
+	.ms-topbar__text .ms-icon {
+		display: none;
+	}
 }
 
 @media (min-width: 720px) {
@@ -473,8 +487,18 @@ body.ms-site .button[disabled] {
 	height: 28px;
 }
 
-/* On the narrowest phones the logo gives way so the bar fits. */
-@media (max-width: 359px) {
+/* On phones the logo gives way a little so the bar fits with its four buttons. */
+@media (max-width: 419px) {
+	.ms-header__bar {
+		gap: 8px;
+	}
+
+	.ms-logo img {
+		height: 24px;
+	}
+}
+
+@media (max-width: 374px) {
 	.ms-logo img {
 		height: 22px;
 	}
@@ -529,6 +553,24 @@ body.ms-site .ms-search input[type="search"] {
 
 .ms-header .ms-search {
 	display: none;
+}
+
+/* On phones and tablets the search field lives in the menu drawer; this button opens it there.
+   On the narrowest phones it steps aside so the bar fits (search stays in the menu). */
+.ms-header__search {
+	display: inline-flex;
+}
+
+@media (max-width: 419px) {
+	.ms-header__tools {
+		gap: 0;
+	}
+}
+
+@media (max-width: 359px) {
+	.ms-header__search {
+		display: none;
+	}
 }
 
 .ms-search--page {
@@ -644,7 +686,8 @@ body.ms-site .ms-search input[type="search"] {
 		position: static;
 	}
 
-	.ms-header__menu {
+	.ms-header__menu,
+	.ms-header__search {
 		display: none;
 	}
 
@@ -730,6 +773,14 @@ body.ms-site .ms-search input[type="search"] {
 	padding: 14px 0;
 	font-size: 17px;
 	font-weight: 600;
+}
+
+/* The category of the page being viewed. */
+.ms-drawer__nav .ms-menu > li.current-menu-item > a,
+.ms-drawer__nav .ms-menu > li.current-menu-ancestor > a,
+.ms-drawer__nav .ms-menu > li.current-product_cat-ancestor > a {
+	padding-inline-start: 12px;
+	box-shadow: inset 3px 0 0 0 var(--ms-yellow);
 }
 
 .ms-subtoggle {
@@ -879,6 +930,30 @@ body.ms-site .ms-search input[type="search"] {
 
 .ms-hero__dot.is-active::before {
 	background: var(--ms-ink);
+}
+
+/* Pause and play for the banners: the visitor decides whether they move. */
+.ms-hero__pause {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	width: 30px;
+	height: 30px;
+	margin-inline-start: 6px;
+	padding: 0;
+	border: 0;
+	background: transparent;
+	color: var(--ms-ink);
+	cursor: pointer;
+}
+
+.ms-hero__pause:hover {
+	background: var(--ms-sand);
+}
+
+.ms-hero__pause .ms-icon {
+	width: 16px;
+	height: 16px;
 }
 
 .ms-hero__visual {
@@ -1548,6 +1623,13 @@ body.ms-site ul.products li.product .onsale {
 	color: var(--ms-yellow);
 }
 
+/* On the narrowest phones a long link name may wrap rather than push the page wider. */
+@media (max-width: 359px) {
+	.ms-footer__list {
+		white-space: normal;
+	}
+}
+
 /* Payment and delivery marks. Every mark is a card of one size on a fixed grid:
    two to a row, or four where the column is wide enough. */
 .ms-marks {
@@ -1733,6 +1815,101 @@ body.ms-site .woocommerce-products-header__title {
 	border-bottom: 1px solid var(--ms-rule);
 	font-weight: 600;
 	text-decoration: none;
+}
+
+/* Category chips: square links to the categories. On the shop pages they form a
+   row that scrolls sideways on phones and tablets, where the category menu row is
+   not shown; on the "nothing found" page they wrap. */
+
+.ms-chips,
+.ms-catstrip {
+	display: flex;
+	gap: 8px;
+	margin: 0;
+	padding: 0;
+	list-style: none;
+}
+
+.ms-chips {
+	flex-wrap: wrap;
+}
+
+.ms-catstrip {
+	flex-wrap: nowrap;
+	margin: 0 calc(var(--ms-gutter) * -1) 22px;
+	padding: 2px var(--ms-gutter);
+	overflow-x: auto;
+	scrollbar-width: none;
+	-webkit-overflow-scrolling: touch;
+}
+
+.ms-catstrip::-webkit-scrollbar {
+	display: none;
+}
+
+.ms-chip {
+	display: inline-flex;
+	align-items: center;
+	min-height: 40px;
+	padding: 0 14px;
+	border: 1px solid var(--ms-ink);
+	background: var(--ms-white);
+	color: var(--ms-ink);
+	font-size: 14px;
+	font-weight: 600;
+	line-height: 1.2;
+	white-space: nowrap;
+	text-decoration: none;
+	transition: background-color 0.15s ease, color 0.15s ease;
+}
+
+.ms-chip:hover,
+.ms-chip:focus-visible {
+	background: var(--ms-sand);
+}
+
+.ms-chip[aria-current] {
+	background: var(--ms-ink);
+	color: var(--ms-white);
+}
+
+@media (min-width: 1024px) {
+	.ms-catstrip {
+		display: none;
+	}
+}
+
+/* Result count and sorting on one line. */
+.ms-toolbar {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	justify-content: space-between;
+	gap: 10px 16px;
+	margin: 0 0 20px;
+}
+
+body.ms-site .ms-toolbar .woocommerce-result-count,
+body.ms-site .ms-toolbar .woocommerce-ordering {
+	float: none !important;
+	margin: 0 !important;
+}
+
+/* Nothing found: a way forward instead of a dead end. */
+.ms-noresults {
+	max-width: 72ch;
+}
+
+.ms-noresults .ms-lead {
+	margin-bottom: 20px;
+}
+
+.ms-noresults .ms-search--page {
+	margin: 0 0 24px;
+}
+
+.ms-noresults .ms-chips {
+	margin-bottom: 28px;
 }
 
 /* Shop list */
@@ -2053,6 +2230,34 @@ body.ms-site div.product .stock.out-of-stock {
 	color: var(--ms-alert) !important;
 }
 
+/* Delivery, pick-up and payment, right under the add-to-cart button. */
+.ms-assure {
+	display: grid;
+	gap: 10px;
+	margin: 0 0 24px;
+	padding: 18px 0 0;
+	border-top: 1px solid var(--ms-rule);
+	list-style: none;
+	color: var(--ms-graphite);
+	font-size: 14px;
+	line-height: 1.5;
+}
+
+.ms-assure li {
+	display: flex;
+	align-items: flex-start;
+	gap: 10px;
+}
+
+.ms-assure .ms-icon {
+	margin-top: 1px;
+	color: var(--ms-ink);
+}
+
+.ms-assure strong {
+	color: var(--ms-ink);
+}
+
 body.ms-site div.product .product_meta {
 	display: grid;
 	gap: 4px;
@@ -2060,6 +2265,68 @@ body.ms-site div.product .product_meta {
 	border-top: 1px solid var(--ms-rule);
 	color: var(--ms-graphite);
 	font-size: 14px;
+}
+
+/* On a phone the add-to-cart button follows the visitor down the page. */
+.ms-stickybar {
+	position: fixed;
+	inset-inline: 0;
+	bottom: 0;
+	z-index: 58;
+	display: flex;
+	align-items: center;
+	gap: 12px;
+	padding: 10px var(--ms-gutter) calc(10px + env(safe-area-inset-bottom, 0px));
+	border-top: 1px solid var(--ms-rule);
+	background: var(--ms-cream);
+}
+
+.ms-stickybar__info {
+	display: grid;
+	flex: 1 1 auto;
+	gap: 2px;
+	min-width: 0;
+}
+
+.ms-stickybar__name {
+	overflow: hidden;
+	font-size: 14px;
+	font-weight: 600;
+	line-height: 1.3;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+}
+
+.ms-stickybar__price {
+	color: var(--ms-graphite);
+	font-size: 14px;
+	line-height: 1.3;
+}
+
+.ms-stickybar__price ins {
+	color: var(--ms-ink);
+	font-weight: 600;
+	text-decoration: none;
+}
+
+.ms-stickybar .ms-button {
+	flex: none;
+	min-height: 48px;
+	padding-inline: 22px;
+}
+
+body.ms-stickybar-on {
+	padding-bottom: 72px;
+}
+
+body.ms-stickybar-on .ms-whatsapp {
+	bottom: calc(84px + env(safe-area-inset-bottom, 0px));
+}
+
+@media (min-width: 900px) {
+	.ms-stickybar {
+		display: none !important;
+	}
 }
 
 body.ms-site div.product .product_meta .sku {
@@ -2114,6 +2381,25 @@ body.ms-site div.product .woocommerce-tabs ul.tabs li.active a,
 body.ms-site div.product .woocommerce-tabs ul.tabs li a:hover {
 	color: var(--ms-ink) !important;
 	box-shadow: inset 0 -3px 0 0 var(--ms-yellow);
+}
+
+/* On a phone the tab names stay on one line and scroll sideways. */
+@media (max-width: 599px) {
+	body.ms-site div.product .woocommerce-tabs ul.tabs {
+		flex-wrap: nowrap;
+		margin-inline: calc(var(--ms-gutter) * -1) !important;
+		padding-inline: var(--ms-gutter) !important;
+		overflow-x: auto;
+		scrollbar-width: none;
+	}
+
+	body.ms-site div.product .woocommerce-tabs ul.tabs::-webkit-scrollbar {
+		display: none;
+	}
+
+	body.ms-site div.product .woocommerce-tabs ul.tabs li a {
+		white-space: nowrap;
+	}
 }
 
 body.ms-site div.product .woocommerce-tabs .panel {
