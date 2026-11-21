@@ -1,0 +1,2442 @@
+/*
+ * Maison Square
+ * Square geometry, the yellow frame, Inter. No rounded corners anywhere.
+ *
+ *  1. Fonts            8. Hero and the frame     15. Shop pages
+ *  2. Tokens           9. Sections               16. Product page
+ *  3. Base            10. Category tiles         17. Account and forms
+ *  4. Helpers         11. Product cards          18. Cart and checkout
+ *  5. Buttons         12. Services               19. Info page, missing page
+ *  6. Top line        13. Reviews                20. Motion
+ *  7. Header, menu    14. Footer
+ */
+
+/* 1. Fonts ---------------------------------------------------------------- */
+
+@font-face {
+	font-family: "Inter";
+	font-style: normal;
+	font-weight: 400;
+	font-display: swap;
+	src: url("../fonts/inter-400.woff") format("woff");
+}
+
+@font-face {
+	font-family: "Inter";
+	font-style: normal;
+	font-weight: 600;
+	font-display: swap;
+	src: url("../fonts/inter-600.woff") format("woff");
+}
+
+@font-face {
+	font-family: "Inter";
+	font-style: normal;
+	font-weight: 700;
+	font-display: swap;
+	src: url("../fonts/inter-700.woff") format("woff");
+}
+
+/* 2. Tokens --------------------------------------------------------------- */
+
+:root {
+	--ms-yellow: #F7C20A;   /* outline, frames, highlights. Never for text on light backgrounds */
+	--ms-ink: #161616;      /* text, logo, buttons */
+	--ms-cream: #FDF8EF;    /* page background */
+	--ms-white: #FFFFFF;
+	--ms-graphite: #5A5852; /* secondary text */
+	--ms-sand: #EFE7D6;     /* panels, placeholders */
+
+	--ms-rule: #E1D7C2;              /* hairlines on cream, a deeper sand */
+	--ms-rule-dark: rgba(255, 255, 255, 0.18);
+	--ms-muted-dark: rgba(255, 255, 255, 0.74);
+	--ms-alert: #9B2C1F;             /* errors and "out of stock" only */
+
+	--ms-font: "Inter", "Helvetica Neue", Arial, sans-serif;
+
+	--ms-wrap: 1320px;
+	--ms-gutter: clamp(16px, 4vw, 40px);
+	--ms-gap: clamp(14px, 2.2vw, 28px);
+	--ms-frame: 8px;                 /* the yellow frame on tiles and cards */
+}
+
+/* 3. Base ----------------------------------------------------------------- */
+
+*,
+*::before,
+*::after {
+	box-sizing: border-box;
+}
+
+html {
+	-webkit-text-size-adjust: 100%;
+	text-size-adjust: 100%;
+	scroll-behavior: smooth;
+}
+
+body.ms-site {
+	margin: 0;
+	background: var(--ms-cream);
+	color: var(--ms-ink);
+	font: 400 16px/1.6 var(--ms-font);
+	-webkit-font-smoothing: antialiased;
+	-moz-osx-font-smoothing: grayscale;
+	overflow-wrap: break-word;
+}
+
+body.ms-drawer-open {
+	overflow: hidden;
+}
+
+[hidden] {
+	display: none !important;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+	margin: 0 0 0.5em;
+	font-weight: 700;
+	line-height: 1.15;
+	letter-spacing: -0.02em;
+}
+
+p,
+ul,
+ol,
+dl,
+blockquote,
+table,
+figure {
+	margin: 0 0 1em;
+}
+
+img,
+svg,
+video {
+	max-width: 100%;
+	height: auto;
+}
+
+img {
+	border-style: none;
+}
+
+a {
+	color: inherit;
+	text-decoration: underline;
+	text-decoration-thickness: 1px;
+	text-underline-offset: 3px;
+}
+
+a:hover {
+	text-decoration-color: var(--ms-yellow);
+	text-decoration-thickness: 3px;
+}
+
+strong,
+b {
+	font-weight: 600;
+}
+
+:focus-visible {
+	outline: 2px solid var(--ms-ink);
+	outline-offset: 3px;
+}
+
+.ms-topbar :focus-visible,
+.ms-footer :focus-visible {
+	outline-color: var(--ms-white);
+}
+
+::selection {
+	background: var(--ms-yellow);
+	color: var(--ms-ink);
+}
+
+/* Form fields */
+
+body.ms-site input[type="text"],
+body.ms-site input[type="email"],
+body.ms-site input[type="tel"],
+body.ms-site input[type="url"],
+body.ms-site input[type="password"],
+body.ms-site input[type="search"],
+body.ms-site input[type="number"],
+body.ms-site input[type="date"],
+body.ms-site select,
+body.ms-site textarea {
+	max-width: 100%;
+	min-height: 48px;
+	padding: 11px 14px;
+	border: 1px solid var(--ms-ink);
+	border-radius: 0;
+	background-color: var(--ms-white);
+	color: var(--ms-ink);
+	font: 400 16px/1.4 var(--ms-font);
+	box-shadow: none;
+}
+
+body.ms-site textarea {
+	min-height: 120px;
+}
+
+body.ms-site select {
+	padding-inline-end: 40px;
+	background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' fill='none' stroke='%23161616' stroke-width='2' stroke-linecap='square'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
+	background-repeat: no-repeat;
+	background-position: right 10px center;
+	-webkit-appearance: none;
+	appearance: none;
+}
+
+[dir="rtl"] body.ms-site select {
+	background-position: left 10px center;
+}
+
+body.ms-site ::placeholder {
+	color: var(--ms-graphite);
+	opacity: 1;
+}
+
+label {
+	font-weight: 600;
+}
+
+/* 4. Helpers -------------------------------------------------------------- */
+
+.screen-reader-text {
+	position: absolute !important;
+	width: 1px;
+	height: 1px;
+	margin: -1px;
+	padding: 0;
+	overflow: hidden;
+	clip: rect(0, 0, 0, 0);
+	white-space: nowrap;
+	border: 0;
+}
+
+.ms-container {
+	width: 100%;
+	max-width: calc(var(--ms-wrap) + 2 * var(--ms-gutter));
+	margin-inline: auto;
+	padding-inline: var(--ms-gutter);
+}
+
+.ms-skip {
+	position: absolute;
+	top: -100px;
+	inset-inline-start: 12px;
+	z-index: 100001;
+	padding: 12px 16px;
+	background: var(--ms-ink);
+	color: var(--ms-white);
+	font-weight: 600;
+	text-decoration: none;
+}
+
+.ms-skip:focus {
+	top: 12px;
+}
+
+.ms-icon {
+	display: block;
+	flex: none;
+}
+
+.ms-iconbtn {
+	position: relative;
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	flex: none;
+	width: 44px;
+	height: 44px;
+	padding: 0;
+	border: 0;
+	border-radius: 0;
+	background: transparent;
+	color: var(--ms-ink);
+	cursor: pointer;
+	text-decoration: none;
+}
+
+.ms-iconbtn:hover {
+	background: var(--ms-sand);
+}
+
+/* The yellow line: a thin vertical line between the logo and the details. */
+.ms-yline {
+	display: block;
+	flex: none;
+	width: 2px;
+	background: var(--ms-yellow);
+}
+
+.ms-link {
+	font-weight: 600;
+	text-underline-offset: 4px;
+}
+
+.ms-lead {
+	max-width: 56ch;
+	color: var(--ms-graphite);
+	font-size: 18px;
+}
+
+.ms-actions {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	gap: 16px 28px;
+	margin: 28px 0 0;
+}
+
+/* Notes that only the store team sees while setting up. */
+.ms-hint {
+	max-width: 72ch;
+	margin: 16px 0 0;
+	padding: 14px 18px;
+	border-inline-start: 4px solid var(--ms-yellow);
+	background: var(--ms-white);
+	font-size: 14px;
+}
+
+.ms-hint a {
+	margin-inline-start: 6px;
+	font-weight: 600;
+	white-space: nowrap;
+}
+
+.ms-empty {
+	margin: 0;
+	padding: 36px 0;
+	border-block: 1px solid var(--ms-rule);
+	color: var(--ms-graphite);
+	font-size: 18px;
+}
+
+/* 5. Buttons -------------------------------------------------------------- */
+
+.ms-button,
+body.ms-site .button,
+body.ms-site #respond input#submit,
+body.ms-site .wp-block-button__link,
+body.ms-site .wp-element-button {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	gap: 8px;
+	min-height: 48px;
+	margin: 0;
+	padding: 14px 28px;
+	border: 0;
+	border-radius: 0 !important;
+	background-color: var(--ms-ink) !important;
+	color: var(--ms-white) !important;
+	font: 600 16px/1.25 var(--ms-font);
+	letter-spacing: 0;
+	text-align: center;
+	text-decoration: none;
+	text-transform: none;
+	cursor: pointer;
+	box-shadow: inset 0 0 0 0 var(--ms-yellow);
+	transition: box-shadow 0.15s ease;
+	opacity: 1;
+}
+
+.ms-button:hover,
+body.ms-site .button:hover,
+body.ms-site #respond input#submit:hover,
+body.ms-site .wp-block-button__link:hover,
+body.ms-site .wp-element-button:hover {
+	box-shadow: inset 0 -5px 0 0 var(--ms-yellow);
+}
+
+/* On dark backgrounds the button turns yellow with ink text. */
+.ms-button--dark {
+	background-color: var(--ms-yellow) !important;
+	color: var(--ms-ink) !important;
+}
+
+.ms-button--dark:hover {
+	box-shadow: inset 0 -5px 0 0 var(--ms-white);
+}
+
+body.ms-site .button.disabled,
+body.ms-site .button:disabled,
+body.ms-site .button[disabled] {
+	background-color: var(--ms-graphite) !important;
+	color: var(--ms-white) !important;
+	opacity: 1 !important;
+	cursor: not-allowed;
+	box-shadow: none;
+}
+
+/* 6. Top line ------------------------------------------------------------- */
+
+.ms-topbar {
+	background: var(--ms-ink);
+	color: var(--ms-white);
+	font-size: 14px;
+}
+
+.ms-topbar__inner {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: 16px;
+	min-height: 40px;
+	padding-block: 8px;
+}
+
+.ms-topbar__text {
+	display: flex;
+	align-items: center;
+	gap: 10px;
+	margin: 0;
+	line-height: 1.35;
+}
+
+.ms-topbar__link {
+	display: none;
+	flex: none;
+	color: inherit;
+	text-decoration: none;
+}
+
+.ms-topbar__link:hover {
+	color: var(--ms-yellow);
+}
+
+@media (max-width: 480px) {
+	.ms-topbar {
+		font-size: 13px;
+	}
+}
+
+@media (min-width: 720px) {
+	.ms-topbar__link {
+		display: inline;
+	}
+}
+
+/* 7. Header, menu, drawer ------------------------------------------------- */
+
+.ms-header {
+	position: sticky;
+	top: 0;
+	z-index: 60;
+	border-bottom: 1px solid var(--ms-rule);
+	background: var(--ms-cream);
+}
+
+.admin-bar .ms-header {
+	top: 46px;
+}
+
+@media (max-width: 600px) {
+	.admin-bar .ms-header {
+		top: 0;
+	}
+}
+
+@media (min-width: 783px) {
+	.admin-bar .ms-header {
+		top: 32px;
+	}
+}
+
+.ms-header__bar {
+	display: flex;
+	align-items: center;
+	gap: 10px;
+	min-height: 60px;
+}
+
+.ms-header__menu {
+	margin-inline-start: -10px;
+}
+
+.ms-logo {
+	display: inline-flex;
+	flex: none;
+}
+
+.ms-logo img {
+	display: block;
+	width: auto;
+	height: 28px;
+}
+
+/* On the narrowest phones the logo gives way so the bar fits. */
+@media (max-width: 359px) {
+	.ms-logo img {
+		height: 22px;
+	}
+}
+
+.ms-header .ms-yline {
+	display: none;
+	height: 36px;
+}
+
+.ms-header__tools {
+	display: flex;
+	align-items: center;
+	gap: 2px;
+	margin-inline-start: auto;
+	margin-inline-end: -10px;
+}
+
+/* Search */
+
+.ms-search {
+	display: flex;
+	align-items: center;
+	height: 46px;
+	border: 1px solid var(--ms-ink);
+	background: var(--ms-white);
+}
+
+.ms-search:focus-within {
+	outline: 2px solid var(--ms-ink);
+	outline-offset: 2px;
+}
+
+body.ms-site .ms-search input[type="search"] {
+	flex: 1 1 auto;
+	width: 100%;
+	min-width: 0;
+	min-height: 0;
+	height: 100%;
+	padding: 0 14px;
+	border: 0;
+	background: transparent;
+	font-size: 15px;
+	outline: none;
+	-webkit-appearance: none;
+	appearance: none;
+}
+
+.ms-search .ms-iconbtn {
+	height: 44px;
+}
+
+.ms-header .ms-search {
+	display: none;
+}
+
+.ms-search--page {
+	max-width: 480px;
+	margin-top: 24px;
+}
+
+/* Cart number */
+
+.ms-cart-count {
+	position: absolute;
+	top: 3px;
+	inset-inline-end: 1px;
+	min-width: 18px;
+	height: 18px;
+	padding: 0 4px;
+	background: var(--ms-yellow);
+	color: var(--ms-ink);
+	font: 700 11px/18px var(--ms-font);
+	text-align: center;
+}
+
+.ms-cart-count[data-count="0"] {
+	display: none;
+}
+
+/* Shop menu (wide screens) */
+
+.ms-nav {
+	display: none;
+}
+
+.ms-menu,
+.ms-menu .sub-menu {
+	margin: 0;
+	padding: 0;
+	list-style: none;
+}
+
+.ms-menu a {
+	text-decoration: none;
+}
+
+.ms-nav .ms-menu {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 0 clamp(18px, 2.2vw, 34px);
+}
+
+.ms-nav .ms-menu > li {
+	position: relative;
+}
+
+.ms-nav .ms-menu > li > a {
+	display: flex;
+	align-items: center;
+	height: 50px;
+	font-size: 15px;
+	font-weight: 600;
+	white-space: nowrap;
+	box-shadow: inset 0 0 0 0 var(--ms-yellow);
+	transition: box-shadow 0.15s ease;
+}
+
+.ms-nav .ms-menu > li > a:hover,
+.ms-nav .ms-menu > li:focus-within > a,
+.ms-nav .ms-menu > li.current-menu-item > a,
+.ms-nav .ms-menu > li.current-menu-ancestor > a,
+.ms-nav .ms-menu > li.current-product_cat-ancestor > a {
+	box-shadow: inset 0 -3px 0 0 var(--ms-yellow);
+}
+
+.ms-nav .menu-item-has-children > a::after {
+	content: "";
+	width: 7px;
+	height: 7px;
+	margin: -4px 0 0 9px;
+	border: solid currentColor;
+	border-width: 0 2px 2px 0;
+	transform: rotate(45deg);
+}
+
+.ms-nav .sub-menu {
+	position: absolute;
+	top: 100%;
+	inset-inline-start: -18px;
+	z-index: 70;
+	display: none;
+	min-width: 230px;
+	padding: 8px 0;
+	border: 1px solid var(--ms-ink);
+	background: var(--ms-white);
+}
+
+.ms-nav .ms-menu > li:hover > .sub-menu,
+.ms-nav .ms-menu > li:focus-within > .sub-menu {
+	display: block;
+}
+
+.ms-nav .sub-menu a {
+	display: block;
+	padding: 9px 18px;
+	font-size: 15px;
+}
+
+.ms-nav .sub-menu a:hover,
+.ms-nav .sub-menu a:focus-visible {
+	background: var(--ms-sand);
+}
+
+@media (min-width: 1024px) {
+	.ms-header {
+		position: static;
+	}
+
+	.ms-header__menu {
+		display: none;
+	}
+
+	.ms-header__bar {
+		gap: 24px;
+		min-height: 86px;
+	}
+
+	.ms-logo img {
+		height: 36px;
+	}
+
+	.ms-header .ms-yline {
+		display: block;
+	}
+
+	.ms-header__tools {
+		flex: 1 1 auto;
+		gap: 6px;
+		margin-inline: 0 -10px;
+	}
+
+	.ms-header .ms-search {
+		display: flex;
+		flex: 0 1 440px;
+		margin-inline-end: auto;
+	}
+
+	.ms-nav {
+		display: block;
+		border-top: 1px solid var(--ms-rule);
+	}
+}
+
+/* Menu drawer (phones and tablets) */
+
+.ms-drawer {
+	position: fixed;
+	inset: 0;
+	z-index: 100000;
+	display: flex;
+}
+
+.ms-drawer__panel {
+	display: flex;
+	flex-direction: column;
+	gap: 20px;
+	width: min(88vw, 390px);
+	height: 100%;
+	padding: 0 20px 32px;
+	overflow-y: auto;
+	overscroll-behavior: contain;
+	background: var(--ms-cream);
+}
+
+.ms-drawer__scrim {
+	flex: 1 1 auto;
+	background: rgba(22, 22, 22, 0.55);
+}
+
+.ms-drawer__head {
+	position: sticky;
+	top: 0;
+	z-index: 1;
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	min-height: 60px;
+	margin-inline: -20px;
+	padding-inline: 20px 10px;
+	border-bottom: 1px solid var(--ms-rule);
+	background: var(--ms-cream);
+}
+
+.ms-drawer__nav .ms-menu > li {
+	display: grid;
+	grid-template-columns: minmax(0, 1fr) auto;
+	align-items: center;
+	border-bottom: 1px solid var(--ms-rule);
+}
+
+.ms-drawer__nav .ms-menu > li > a {
+	padding: 14px 0;
+	font-size: 17px;
+	font-weight: 600;
+}
+
+.ms-subtoggle {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	width: 48px;
+	height: 48px;
+	margin-inline-end: -12px;
+	padding: 0;
+	border: 0;
+	background: transparent;
+	color: var(--ms-ink);
+	cursor: pointer;
+}
+
+.ms-subtoggle .ms-icon {
+	transition: transform 0.15s ease;
+}
+
+.ms-subtoggle[aria-expanded="true"] .ms-icon {
+	transform: rotate(180deg);
+}
+
+.ms-drawer__nav .sub-menu {
+	display: none;
+	grid-column: 1 / -1;
+	padding: 0 0 12px 14px;
+	border-inline-start: 2px solid var(--ms-yellow);
+	margin-bottom: 14px;
+}
+
+.ms-drawer__nav .is-open > .sub-menu {
+	display: block;
+}
+
+.ms-drawer__nav .sub-menu a {
+	display: block;
+	padding: 9px 0;
+}
+
+.ms-drawer__links {
+	margin: 0;
+	padding: 0;
+	list-style: none;
+}
+
+.ms-drawer__links a {
+	display: flex;
+	align-items: center;
+	gap: 12px;
+	padding: 11px 0;
+	font-weight: 600;
+	text-decoration: none;
+}
+
+/* Contact details (drawer, footer, info page) */
+
+.ms-contact {
+	display: grid;
+	gap: 10px;
+	margin: 0;
+	padding: 0;
+	list-style: none;
+}
+
+/* A long email address may break, so it never pushes a narrow page wider. */
+.ms-contact li {
+	display: flex;
+	align-items: flex-start;
+	gap: 10px;
+	overflow-wrap: anywhere;
+}
+
+.ms-contact .ms-icon {
+	margin-top: 2px;
+}
+
+.ms-contact a {
+	text-decoration: none;
+}
+
+.ms-contact a:hover {
+	text-decoration: underline;
+	text-decoration-color: var(--ms-yellow);
+}
+
+.ms-contact--drawer {
+	padding-top: 20px;
+	border-top: 1px solid var(--ms-rule);
+	color: var(--ms-graphite);
+	font-size: 15px;
+}
+
+/* 8. Hero and the frame ---------------------------------------------------- */
+
+.ms-hero {
+	padding-block: clamp(28px, 4.6vw, 64px);
+}
+
+.ms-hero__grid {
+	display: grid;
+	gap: clamp(28px, 5vw, 72px);
+	align-items: center;
+}
+
+.ms-hero__title {
+	max-width: 15ch;
+	margin: 0 0 20px;
+	font-size: clamp(2.375rem, 1.35rem + 4.6vw, 4.875rem);
+	font-weight: 700;
+	line-height: 0.98;
+	letter-spacing: -0.04em;
+	text-transform: lowercase;
+}
+
+.ms-hero__text {
+	max-width: 44ch;
+	margin: 0 0 28px;
+	color: var(--ms-graphite);
+	font-size: clamp(1rem, 0.95rem + 0.3vw, 1.1875rem);
+}
+
+.ms-hero__picker {
+	display: flex;
+	gap: 4px;
+	margin-top: 28px;
+	margin-inline-start: -8px;
+}
+
+.ms-hero__dot {
+	position: relative;
+	width: 30px;
+	height: 30px;
+	padding: 0;
+	border: 0;
+	background: transparent;
+	cursor: pointer;
+}
+
+.ms-hero__dot::before {
+	content: "";
+	position: absolute;
+	inset: 8px;
+	border: 2px solid var(--ms-ink);
+}
+
+.ms-hero__dot.is-active::before {
+	background: var(--ms-ink);
+}
+
+.ms-hero__visual {
+	width: min(100%, 560px, 66svh);
+	margin-inline: auto;
+}
+
+.ms-hero__media {
+	container-type: inline-size;
+}
+
+/* The frame: a yellow outlined square. Its border is 1/18 of its side. */
+.ms-frame {
+	aspect-ratio: 1;
+	border: solid var(--ms-yellow);
+	border-width: clamp(12px, 2.6vw, 30px);
+	border-width: 5.5556cqw;
+	background: var(--ms-sand);
+	overflow: hidden;
+}
+
+.ms-frame img {
+	display: block;
+	width: 100%;
+	height: 100%;
+	object-fit: cover;
+}
+
+.ms-hero__symbol {
+	display: block;
+	width: 100%;
+	height: auto;
+	background: var(--ms-white);
+}
+
+/* Several banners share one place, so the page does not jump when the banner changes.
+   The photo fades, the words appear. */
+[data-ms-banners] .ms-hero__copy,
+[data-ms-banners] .ms-hero__visual {
+	display: grid;
+}
+
+[data-ms-banners] .ms-hero__slide,
+[data-ms-banners] .ms-hero__media {
+	grid-area: 1 / 1;
+	min-width: 0;
+}
+
+[data-ms-banners] .ms-hero__slide {
+	transition: opacity 0.4s ease;
+}
+
+[data-ms-banners] .ms-hero__media {
+	transition: opacity 0.7s ease, visibility 0s;
+}
+
+/* A banner that is not showing keeps its place in the layout, out of sight and out of reach. */
+[data-ms-banners] .ms-hero__slide[hidden],
+[data-ms-banners] .ms-hero__media[hidden] {
+	display: block !important;
+	visibility: hidden;
+	opacity: 0;
+}
+
+[data-ms-banners] .ms-hero__slide[hidden] {
+	transition: none;
+}
+
+[data-ms-banners] .ms-hero__media[hidden] {
+	transition: opacity 0.7s ease, visibility 0s 0.7s;
+}
+
+/* On a phone a banner photo comes first, then the words. */
+@media (max-width: 719px) {
+	.ms-hero__grid:has(.ms-frame) .ms-hero__visual {
+		order: -1;
+	}
+}
+
+@media (min-width: 720px) {
+	.ms-hero__grid {
+		grid-template-columns: minmax(0, 1.1fr) minmax(0, 0.9fr);
+	}
+
+	.ms-hero__visual {
+		margin-inline: auto 0;
+	}
+}
+
+/* A banner with a photo runs across the whole page. On a phone the photo sits on top
+   and the words below it; from 900px the words sit on a cream panel over the photo,
+   with the yellow line down its left side. */
+.ms-hero--photo {
+	padding-block: 0 clamp(8px, 2vw, 24px);
+}
+
+.ms-hero--photo .ms-hero__grid {
+	max-width: none;
+	padding-inline: 0;
+	gap: 0;
+	grid-template-columns: minmax(0, 1fr);
+}
+
+.ms-hero--photo .ms-hero__visual {
+	width: 100%;
+	margin: 0;
+	order: -1;
+}
+
+.ms-hero--photo .ms-hero__media {
+	height: 100%;
+}
+
+.ms-hero--photo .ms-frame {
+	aspect-ratio: 16 / 9;
+	height: 100%;
+	border: 0;
+}
+
+.ms-hero--photo .ms-hero__copy {
+	padding: 24px var(--ms-gutter) 8px;
+}
+
+.ms-hero--photo .ms-hero__title {
+	font-size: clamp(1.625rem, 1.2rem + 1.6vw, 2.5rem);
+}
+
+.ms-hero--photo .ms-hero__text {
+	font-size: 0.9375rem;
+}
+
+@media (min-width: 900px) {
+	.ms-hero--photo .ms-hero__grid {
+		grid-template-areas: "banner";
+	}
+
+	.ms-hero--photo .ms-hero__visual,
+	.ms-hero--photo .ms-hero__copy {
+		grid-area: banner;
+	}
+
+	.ms-hero--photo .ms-frame {
+		aspect-ratio: auto;
+		height: clamp(360px, 34vw, 520px);
+	}
+
+	.ms-hero--photo .ms-hero__copy {
+		z-index: 1;
+		align-self: end;
+		justify-self: start;
+		width: min(420px, 40vw);
+		margin: 0 0 clamp(24px, 3vw, 40px) max(var(--ms-gutter), calc((100vw - var(--ms-wrap)) / 2));
+		padding: clamp(18px, 2vw, 28px);
+		border-inline-start: 4px solid var(--ms-yellow);
+		background: var(--ms-cream);
+	}
+
+	.ms-hero--photo .ms-hero__text {
+		margin-bottom: 18px;
+	}
+
+	.ms-hero--photo .ms-hero__picker {
+		margin-top: 14px;
+	}
+}
+
+/* On a phone the banner stays compact: a shorter photo, the banner squares right under
+   it, then the words with tighter spacing. */
+@media (max-width: 899px) {
+	.ms-hero--photo .ms-frame {
+		aspect-ratio: 16 / 9;
+	}
+
+	.ms-hero--photo .ms-hero__copy {
+		padding-top: 12px;
+	}
+
+	.ms-hero--photo[data-ms-banners] .ms-hero__picker {
+		grid-row: 1;
+		margin: 0 0 8px -8px;
+	}
+
+	.ms-hero--photo[data-ms-banners] .ms-hero__slide {
+		grid-row: 2;
+	}
+
+	/* Each banner's words take only the room they need, so there is no gap under a short one. */
+	.ms-hero--photo[data-ms-banners] .ms-hero__slide[hidden] {
+		display: none !important;
+	}
+
+	.ms-hero--photo .ms-hero__title {
+		margin-bottom: 12px;
+	}
+
+	.ms-hero--photo .ms-hero__text {
+		margin-bottom: 16px;
+	}
+}
+
+/* 9. Sections ------------------------------------------------------------- */
+
+.ms-section {
+	padding-block: clamp(28px, 4.2vw, 56px);
+}
+
+.ms-section__head {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: baseline;
+	justify-content: space-between;
+	gap: 10px 24px;
+	margin-bottom: clamp(20px, 3vw, 34px);
+}
+
+.ms-h2 {
+	margin: 0;
+	font-size: clamp(1.75rem, 1.25rem + 1.9vw, 2.625rem);
+	line-height: 1.02;
+	letter-spacing: -0.035em;
+	text-transform: lowercase;
+}
+
+/* 10. Category tiles ------------------------------------------------------ */
+
+.ms-tiles {
+	display: grid;
+	grid-template-columns: repeat(2, minmax(0, 1fr));
+	gap: var(--ms-gap);
+	margin: 0;
+	padding: 0;
+	list-style: none;
+}
+
+.ms-tile {
+	position: relative;
+	display: block;
+	text-decoration: none;
+}
+
+.ms-tile__square {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	aspect-ratio: 1;
+	background: var(--ms-sand);
+	overflow: hidden;
+}
+
+.ms-tile__square img {
+	display: block;
+	width: 100%;
+	height: 100%;
+	object-fit: cover;
+}
+
+.ms-tile__square .ms-icon {
+	width: clamp(44px, 26%, 84px);
+	height: auto;
+	aspect-ratio: 1;
+	margin-bottom: 14%;
+}
+
+.ms-tile::after {
+	content: "";
+	position: absolute;
+	inset: 0;
+	border: 0 solid var(--ms-yellow);
+	pointer-events: none;
+	transition: border-width 0.15s ease;
+}
+
+.ms-tile:hover::after,
+.ms-tile:focus-visible::after {
+	border-width: var(--ms-frame);
+}
+
+.ms-tile__name {
+	position: absolute;
+	inset-inline-start: 12px;
+	bottom: 12px;
+	max-width: calc(100% - 24px);
+	padding: 7px 12px;
+	background: var(--ms-white);
+	font-size: 15px;
+	font-weight: 600;
+	line-height: 1.25;
+}
+
+@media (min-width: 720px) {
+	.ms-tiles {
+		grid-template-columns: repeat(4, minmax(0, 1fr));
+	}
+}
+
+@media (min-width: 960px) {
+	.ms-tile__name {
+		inset-inline-start: 16px;
+		bottom: 16px;
+		max-width: calc(100% - 32px);
+		font-size: 16px;
+	}
+}
+
+/* 11. Product cards -------------------------------------------------------- */
+
+body.ms-site ul.products {
+	display: grid !important;
+	grid-template-columns: repeat(2, minmax(0, 1fr));
+	gap: clamp(28px, 3.4vw, 48px) var(--ms-gap);
+	clear: both;
+	margin: 0 0 32px;
+	padding: 0;
+	list-style: none;
+}
+
+body.ms-site ul.products::before,
+body.ms-site ul.products::after {
+	content: none !important;
+	display: none !important;
+}
+
+body.ms-site ul.products li.product {
+	position: relative;
+	display: flex;
+	flex-direction: column;
+	float: none !important;
+	width: auto !important;
+	margin: 0 !important;
+	padding: 0;
+	text-align: start;
+}
+
+body.ms-site ul.products li.product a.woocommerce-loop-product__link {
+	display: block;
+	color: inherit;
+	text-decoration: none;
+}
+
+body.ms-site ul.products li.product a img {
+	display: block;
+	width: 100%;
+	height: auto;
+	aspect-ratio: 1;
+	margin: 0 0 14px !important;
+	object-fit: cover;
+	background: var(--ms-sand);
+	outline: 0 solid var(--ms-yellow);
+	outline-offset: 0;
+	transition: outline-width 0.15s ease, outline-offset 0.15s ease;
+}
+
+body.ms-site ul.products li.product a:hover img,
+body.ms-site ul.products li.product a:focus-visible img {
+	outline-width: var(--ms-frame);
+	outline-offset: calc(var(--ms-frame) * -1);
+}
+
+body.ms-site ul.products li.product .woocommerce-loop-product__title,
+body.ms-site ul.products li.product .woocommerce-loop-category__title {
+	margin: 0 0 6px;
+	padding: 0 !important;
+	font-size: 16px !important;
+	font-weight: 600;
+	line-height: 1.35;
+	letter-spacing: 0;
+}
+
+body.ms-site ul.products li.product .price {
+	display: block;
+	margin: 0 0 14px;
+	color: var(--ms-ink) !important;
+	font-size: 16px !important;
+	font-weight: 400;
+}
+
+body.ms-site .price del {
+	margin-inline-end: 8px;
+	color: var(--ms-graphite) !important;
+	opacity: 1 !important;
+}
+
+body.ms-site .price ins {
+	font-weight: 600;
+	text-decoration: none;
+}
+
+body.ms-site .star-rating {
+	color: var(--ms-ink);
+}
+
+body.ms-site .star-rating span::before,
+body.ms-site p.stars a {
+	color: var(--ms-ink);
+}
+
+body.ms-site ul.products li.product .star-rating {
+	margin: 0 0 8px;
+	font-size: 14px;
+}
+
+/* The card button is quieter than a page button: an ink outline. */
+body.ms-site ul.products li.product .button {
+	align-self: stretch;
+	min-height: 44px;
+	margin-top: auto !important;
+	padding: 11px 16px;
+	background-color: transparent !important;
+	color: var(--ms-ink) !important;
+	font-size: 15px;
+	box-shadow: inset 0 0 0 1.5px var(--ms-ink);
+	transition: background-color 0.15s ease, color 0.15s ease;
+}
+
+body.ms-site ul.products li.product .button:hover,
+body.ms-site ul.products li.product .button:focus-visible {
+	background-color: var(--ms-ink) !important;
+	color: var(--ms-white) !important;
+	box-shadow: inset 0 0 0 1.5px var(--ms-ink);
+}
+
+body.ms-site ul.products li.product .added_to_cart {
+	display: block;
+	margin-top: 10px;
+	padding: 0;
+	font-size: 14px;
+	font-weight: 600;
+}
+
+/* Tags on the picture */
+
+body.ms-site span.onsale,
+body.ms-site ul.products li.product .onsale,
+.ms-badge-new {
+	position: absolute;
+	top: 12px !important;
+	right: auto !important;
+	left: 12px !important;
+	z-index: 2;
+	min-width: 0 !important;
+	min-height: 0 !important;
+	margin: 0 !important;
+	padding: 5px 10px !important;
+	border-radius: 0 !important;
+	font-size: 12px !important;
+	font-weight: 600 !important;
+	line-height: 1.2 !important;
+	letter-spacing: 0;
+}
+
+body.ms-site span.onsale,
+body.ms-site ul.products li.product .onsale {
+	background: var(--ms-ink) !important;
+	color: var(--ms-white) !important;
+}
+
+.ms-badge-new {
+	background: var(--ms-yellow);
+	color: var(--ms-ink);
+}
+
+@media (min-width: 720px) {
+	body.ms-site ul.products {
+		grid-template-columns: repeat(3, minmax(0, 1fr));
+	}
+}
+
+@media (min-width: 1040px) {
+	body.ms-site ul.products {
+		grid-template-columns: repeat(4, minmax(0, 1fr));
+	}
+}
+
+/* 12. Services ------------------------------------------------------------ */
+
+.ms-services {
+	background: var(--ms-sand);
+}
+
+.ms-services__list {
+	display: grid;
+	gap: 24px;
+	margin: 0;
+	padding: clamp(28px, 4vw, 48px) 0;
+	list-style: none;
+}
+
+.ms-service {
+	display: flex;
+	align-items: flex-start;
+	gap: 16px;
+}
+
+.ms-service__title {
+	margin: 0 0 4px;
+	font-size: 17px;
+	letter-spacing: -0.01em;
+	line-height: 1.3;
+}
+
+.ms-service__text {
+	margin: 0;
+	color: var(--ms-graphite);
+	font-size: 15px;
+	line-height: 1.5;
+}
+
+@media (min-width: 820px) {
+	.ms-services__list {
+		grid-template-columns: repeat(3, minmax(0, 1fr));
+		gap: 40px;
+	}
+}
+
+/* 13. Reviews ------------------------------------------------------------- */
+
+.ms-reviews__list {
+	display: grid;
+	gap: 32px;
+	margin: 0;
+	padding: 0;
+	list-style: none;
+}
+
+.ms-review {
+	padding-inline-start: 20px;
+	border-inline-start: 2px solid var(--ms-yellow);
+}
+
+.ms-review__stars {
+	display: flex;
+	gap: 2px;
+	margin: 0 0 12px;
+}
+
+.ms-review__text {
+	margin: 0 0 14px;
+	font-size: 18px;
+	line-height: 1.5;
+}
+
+.ms-review__by {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 2px 12px;
+	margin: 0;
+	color: var(--ms-graphite);
+	font-size: 14px;
+}
+
+.ms-review__by strong {
+	color: var(--ms-ink);
+}
+
+@media (min-width: 900px) {
+	.ms-reviews__list {
+		grid-template-columns: repeat(3, minmax(0, 1fr));
+		gap: 48px;
+	}
+}
+
+/* 14. Footer -------------------------------------------------------------- */
+
+.ms-footer {
+	background: var(--ms-ink);
+	color: var(--ms-white);
+	font-size: 13px;
+}
+
+.ms-footer a {
+	color: inherit;
+	text-decoration: none;
+}
+
+.ms-footer a:hover {
+	color: var(--ms-yellow);
+}
+
+.ms-footer__top {
+	display: grid;
+	gap: 28px;
+	padding-block: clamp(24px, 2.5vw, 32px);
+}
+
+.ms-footer__brand {
+	display: grid;
+	gap: 22px;
+	align-content: start;
+}
+
+.ms-footer .ms-logo {
+	align-self: start;
+}
+
+.ms-footer .ms-logo img {
+	height: 24px;
+}
+
+.ms-footer .ms-contact {
+	gap: 4px;
+}
+
+.ms-footer .ms-contact .ms-icon {
+	width: 16px;
+	height: 16px;
+}
+
+.ms-footer .ms-yline {
+	display: none;
+}
+
+.ms-footer__details {
+	padding-inline-start: 16px;
+	border-inline-start: 2px solid var(--ms-yellow);
+}
+
+.ms-footer__note {
+	margin: 0 0 10px;
+	color: var(--ms-muted-dark);
+}
+
+.ms-social {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 8px 20px;
+	margin: 18px 0 0;
+	padding: 0;
+	list-style: none;
+	font-weight: 600;
+}
+
+.ms-footer__cols {
+	display: grid;
+	grid-template-columns: repeat(2, minmax(0, 1fr));
+	gap: 36px 24px;
+}
+
+/* The last column holds the payment and delivery cards. It is a container,
+   so the cards can go four to a row where it is wide enough. */
+.ms-footer__col:last-child {
+	grid-column: 1 / -1;
+	container-type: inline-size;
+}
+
+.ms-footer__title {
+	margin: 0 0 8px;
+	font-size: 14px;
+	letter-spacing: -0.02em;
+	text-transform: lowercase;
+}
+
+.ms-footer__title:not(:first-child) {
+	margin-top: 14px;
+}
+
+.ms-footer__list {
+	display: grid;
+	gap: 3px;
+	white-space: nowrap;
+	margin: 0;
+	padding: 0;
+	list-style: none;
+	color: var(--ms-muted-dark);
+}
+
+.ms-footer__list a:hover {
+	color: var(--ms-yellow);
+}
+
+/* Payment and delivery marks. Every mark is a card of one size on a fixed grid:
+   two to a row, or four where the column is wide enough. */
+.ms-marks {
+	display: grid;
+	grid-template-columns: repeat(2, 48px);
+	gap: 6px;
+	margin: 0;
+	padding: 0;
+	list-style: none;
+}
+
+@container (min-width: 210px) {
+	.ms-marks {
+		grid-template-columns: repeat(4, 48px);
+	}
+}
+
+/* The small rounding matches the card pictures that come with WooCommerce. */
+.ms-mark {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	width: 48px;
+	height: 30px;
+	overflow: hidden;
+	border-radius: 3px;
+	background: var(--ms-white);
+	color: var(--ms-ink);
+	font-size: 11px;
+	font-weight: 600;
+	line-height: 1.15;
+	text-align: center;
+}
+
+.ms-mark__img {
+	display: block;
+	width: 100%;
+	height: 100%;
+	object-fit: contain;
+}
+
+/* WooCommerce's card pictures are cards already. */
+.ms-mark--card {
+	background: transparent;
+}
+
+.ms-mark--card .ms-mark__img {
+	object-fit: cover;
+}
+
+/* WooCommerce's square pictures sit in the middle of a card of their own grey. */
+.ms-mark--icon {
+	background: #f0f0f0;
+}
+
+.ms-mark__name {
+	padding: 0 4px;
+	overflow-wrap: anywhere;
+}
+
+.ms-footer__bottom {
+	border-top: 1px solid var(--ms-rule-dark);
+	color: var(--ms-muted-dark);
+	font-size: 12px;
+}
+
+.ms-footer__bottom-inner {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	justify-content: space-between;
+	gap: 8px 24px;
+	padding-block: 10px;
+}
+
+.ms-footer__bottom p {
+	margin: 0;
+}
+
+@media (min-width: 640px) {
+	.ms-footer__brand {
+		grid-template-columns: auto auto minmax(0, 1fr);
+		gap: 24px;
+		align-items: stretch;
+	}
+
+	.ms-footer .ms-yline {
+		display: block;
+	}
+
+	.ms-footer__details {
+		padding: 0;
+		border: 0;
+	}
+
+	/* Columns as wide as their links, packed together; the cards column fits four cards. */
+	.ms-footer__cols {
+		grid-template-columns: auto auto minmax(102px, 210px);
+		justify-content: start;
+		column-gap: clamp(32px, 4vw, 64px);
+	}
+
+	.ms-footer__col:last-child {
+		grid-column: auto;
+	}
+}
+
+@media (min-width: 1100px) {
+	.ms-footer__top {
+		grid-template-columns: auto minmax(0, 1fr);
+		gap: clamp(48px, 5vw, 80px);
+	}
+}
+
+/* 15. Pages and shop pages ------------------------------------------------- */
+
+.ms-page,
+.ms-shop,
+.ms-info {
+	padding-block: clamp(24px, 4vw, 48px) clamp(56px, 8vw, 112px);
+}
+
+.ms-pagetitle,
+body.ms-site .woocommerce-products-header__title {
+	margin: 0 0 clamp(20px, 3vw, 32px);
+	font-size: clamp(2rem, 1.35rem + 2.6vw, 3.25rem);
+	line-height: 1.02;
+	letter-spacing: -0.035em;
+	text-transform: lowercase;
+}
+
+.ms-content {
+	max-width: 72ch;
+}
+
+.ms-page--wide .ms-content {
+	max-width: none;
+}
+
+.ms-content > *:last-child {
+	margin-bottom: 0;
+}
+
+.ms-content h2 {
+	margin-top: 1.6em;
+	font-size: 1.625rem;
+}
+
+.ms-content h3 {
+	margin-top: 1.4em;
+	font-size: 1.25rem;
+}
+
+.ms-content blockquote {
+	margin-inline: 0;
+	padding-inline-start: 20px;
+	border-inline-start: 2px solid var(--ms-yellow);
+	font-size: 18px;
+}
+
+.ms-content table {
+	width: 100%;
+	border-collapse: collapse;
+}
+
+.ms-content th,
+.ms-content td {
+	padding: 10px 12px 10px 0;
+	border-bottom: 1px solid var(--ms-rule);
+	text-align: start;
+}
+
+.ms-results {
+	margin: 0;
+	padding: 0;
+	list-style: none;
+	border-top: 1px solid var(--ms-rule);
+}
+
+.ms-results a {
+	display: block;
+	padding: 14px 0;
+	border-bottom: 1px solid var(--ms-rule);
+	font-weight: 600;
+	text-decoration: none;
+}
+
+/* Shop list */
+
+body.ms-site .woocommerce-breadcrumb {
+	margin: 0 0 18px !important;
+	color: var(--ms-graphite) !important;
+	font-size: 14px !important;
+}
+
+body.ms-site .woocommerce-breadcrumb a {
+	color: inherit;
+}
+
+.ms-crumb-sep {
+	margin-inline: 8px;
+	color: #B9AE96;
+}
+
+body.ms-site .woocommerce-products-header {
+	margin: 0;
+}
+
+body.ms-site .term-description {
+	max-width: 60ch;
+	margin-bottom: 24px;
+	color: var(--ms-graphite);
+}
+
+body.ms-site .woocommerce-result-count {
+	margin: 12px 0 20px !important;
+	color: var(--ms-graphite);
+	font-size: 14px;
+}
+
+body.ms-site .woocommerce-ordering {
+	margin: 0 0 20px !important;
+}
+
+body.ms-site .woocommerce-ordering select {
+	min-height: 44px;
+	font-size: 15px;
+}
+
+body.ms-site nav.woocommerce-pagination {
+	margin-top: 40px;
+}
+
+body.ms-site nav.woocommerce-pagination ul {
+	display: flex;
+	flex-wrap: wrap;
+	justify-content: center;
+	gap: 6px;
+	margin: 0;
+	padding: 0;
+	border: 0 !important;
+}
+
+body.ms-site nav.woocommerce-pagination ul li {
+	float: none;
+	overflow: visible;
+	border: 0 !important;
+}
+
+body.ms-site nav.woocommerce-pagination ul li a,
+body.ms-site nav.woocommerce-pagination ul li span {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	min-width: 44px;
+	height: 44px;
+	padding: 0 8px;
+	background: transparent !important;
+	color: var(--ms-ink) !important;
+	font-size: 15px;
+	font-weight: 600;
+	line-height: 1;
+	text-decoration: none;
+}
+
+body.ms-site nav.woocommerce-pagination ul li a:hover,
+body.ms-site nav.woocommerce-pagination ul li a:focus-visible {
+	background: var(--ms-sand) !important;
+}
+
+body.ms-site nav.woocommerce-pagination ul li span.current {
+	background: var(--ms-ink) !important;
+	color: var(--ms-white) !important;
+}
+
+/* Messages */
+
+body.ms-site .woocommerce-message,
+body.ms-site .woocommerce-info,
+body.ms-site .woocommerce-error,
+body.ms-site .woocommerce-noreviews,
+body.ms-site p.no-comments {
+	margin: 0 0 24px !important;
+	padding: 16px 20px !important;
+	border: 0 !important;
+	border-inline-start: 4px solid var(--ms-ink) !important;
+	border-radius: 0 !important;
+	background: var(--ms-white) !important;
+	color: var(--ms-ink) !important;
+	list-style: none;
+}
+
+body.ms-site .woocommerce-message {
+	border-inline-start-color: var(--ms-yellow) !important;
+}
+
+body.ms-site .woocommerce-error {
+	border-inline-start-color: var(--ms-alert) !important;
+}
+
+body.ms-site .woocommerce-message::before,
+body.ms-site .woocommerce-info::before,
+body.ms-site .woocommerce-error::before {
+	content: none !important;
+	display: none !important;
+}
+
+body.ms-site .woocommerce-message:focus,
+body.ms-site .woocommerce-info:focus,
+body.ms-site .woocommerce-error:focus {
+	outline: 0;
+}
+
+body.ms-site .woocommerce-message,
+body.ms-site .woocommerce-info {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	gap: 10px 20px;
+}
+
+body.ms-site .woocommerce-message .button,
+body.ms-site .woocommerce-info .button,
+body.ms-site .woocommerce-error .button {
+	order: 2;
+	float: none;
+	min-height: 40px;
+	margin-inline-start: auto;
+	padding: 9px 18px;
+	font-size: 14px;
+}
+
+/* 16. Product page --------------------------------------------------------- */
+
+body.ms-site div.product {
+	position: relative;
+}
+
+body.ms-site div.product div.images,
+body.ms-site div.product div.summary {
+	float: none !important;
+	width: auto !important;
+	margin-bottom: 40px;
+}
+
+body.ms-site div.product div.images img {
+	background: var(--ms-sand);
+}
+
+body.ms-site div.product div.images .flex-control-thumbs {
+	display: grid;
+	grid-template-columns: repeat(5, minmax(0, 1fr));
+	gap: 10px;
+	margin: 10px 0 0 !important;
+	padding: 0;
+	list-style: none;
+}
+
+body.ms-site div.product div.images .flex-control-thumbs li {
+	float: none !important;
+	width: auto !important;
+	margin: 0 !important;
+}
+
+body.ms-site div.product div.images .flex-control-thumbs li img {
+	display: block;
+	aspect-ratio: 1;
+	object-fit: cover;
+	opacity: 1 !important;
+	outline: 0 solid var(--ms-yellow);
+	outline-offset: 0;
+}
+
+body.ms-site div.product div.images .flex-control-thumbs li img.flex-active,
+body.ms-site div.product div.images .flex-control-thumbs li img:hover {
+	outline-width: 4px;
+	outline-offset: -4px;
+}
+
+body.ms-site div.product .woocommerce-product-gallery__trigger {
+	border-radius: 0 !important;
+}
+
+body.ms-site div.product .product_title {
+	margin: 0 0 12px;
+	font-size: clamp(1.75rem, 1.3rem + 1.7vw, 2.5rem);
+	line-height: 1.08;
+	letter-spacing: -0.03em;
+}
+
+body.ms-site div.product .woocommerce-product-rating {
+	margin-bottom: 12px !important;
+	font-size: 14px;
+}
+
+body.ms-site div.product p.price,
+body.ms-site div.product span.price {
+	margin: 0 0 20px;
+	color: var(--ms-ink) !important;
+	font-size: 22px !important;
+	font-weight: 600;
+}
+
+body.ms-site div.product .woocommerce-product-details__short-description {
+	max-width: 54ch;
+	margin-bottom: 24px;
+	color: var(--ms-graphite);
+}
+
+body.ms-site div.product form.cart {
+	margin: 0 0 28px !important;
+}
+
+body.ms-site div.product form.cart::before,
+body.ms-site div.product form.cart::after {
+	content: none !important;
+	display: none !important;
+}
+
+body.ms-site div.product form.cart:not(.variations_form):not(.grouped_form),
+body.ms-site div.product .woocommerce-variation-add-to-cart {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: stretch;
+	gap: 12px;
+}
+
+body.ms-site div.product form.cart div.quantity {
+	float: none !important;
+	margin: 0 !important;
+}
+
+body.ms-site div.product form.cart .qty {
+	width: 88px;
+	height: 100%;
+	min-height: 54px;
+	padding-inline: 8px;
+	text-align: center;
+}
+
+body.ms-site div.product form.cart .single_add_to_cart_button {
+	float: none !important;
+	flex: 1 1 220px;
+	max-width: 360px;
+	min-height: 54px;
+}
+
+body.ms-site div.product form.cart table.variations {
+	width: 100%;
+	margin: 0 0 8px;
+	border: 0;
+	border-collapse: collapse;
+}
+
+body.ms-site div.product form.cart table.variations th,
+body.ms-site div.product form.cart table.variations td {
+	display: block;
+	padding: 0;
+	border: 0;
+	background: transparent;
+	line-height: 1.4;
+	text-align: start;
+}
+
+body.ms-site div.product form.cart table.variations th label {
+	display: block;
+	margin: 0 0 6px;
+	font-weight: 600;
+}
+
+body.ms-site div.product form.cart table.variations td {
+	margin-bottom: 16px;
+}
+
+body.ms-site div.product form.cart table.variations select {
+	width: 100%;
+	max-width: 360px;
+	margin: 0;
+}
+
+body.ms-site div.product form.cart .reset_variations {
+	display: inline-block;
+	margin: 8px 0 0 12px;
+	font-size: 14px;
+}
+
+body.ms-site div.product .woocommerce-variation {
+	margin-bottom: 16px;
+}
+
+body.ms-site div.product .woocommerce-variation-description p:last-child {
+	margin-bottom: 8px;
+}
+
+body.ms-site div.product .stock {
+	margin: 0 0 16px;
+	color: var(--ms-ink) !important;
+	font-size: 14px !important;
+	font-weight: 600;
+}
+
+body.ms-site div.product .stock.out-of-stock {
+	color: var(--ms-alert) !important;
+}
+
+body.ms-site div.product .product_meta {
+	display: grid;
+	gap: 4px;
+	padding-top: 18px;
+	border-top: 1px solid var(--ms-rule);
+	color: var(--ms-graphite);
+	font-size: 14px;
+}
+
+body.ms-site div.product .product_meta .sku {
+	color: var(--ms-ink);
+	font-weight: 600;
+}
+
+/* Tabs */
+
+body.ms-site div.product .woocommerce-tabs {
+	clear: both;
+	margin-bottom: 16px;
+}
+
+body.ms-site div.product .woocommerce-tabs ul.tabs {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 0 28px;
+	margin: 0 0 24px !important;
+	padding: 0 !important;
+	border-bottom: 1px solid var(--ms-rule);
+	overflow: visible;
+	list-style: none;
+}
+
+body.ms-site div.product .woocommerce-tabs ul.tabs::before,
+body.ms-site div.product .woocommerce-tabs ul.tabs::after,
+body.ms-site div.product .woocommerce-tabs ul.tabs li::before,
+body.ms-site div.product .woocommerce-tabs ul.tabs li::after {
+	content: none !important;
+	display: none !important;
+}
+
+body.ms-site div.product .woocommerce-tabs ul.tabs li {
+	margin: 0 !important;
+	padding: 0 !important;
+	border: 0 !important;
+	border-radius: 0 !important;
+	background: transparent !important;
+}
+
+body.ms-site div.product .woocommerce-tabs ul.tabs li a {
+	display: block;
+	padding: 12px 0 !important;
+	color: var(--ms-graphite) !important;
+	font-weight: 600 !important;
+	text-decoration: none;
+	box-shadow: inset 0 0 0 0 var(--ms-yellow);
+}
+
+body.ms-site div.product .woocommerce-tabs ul.tabs li.active a,
+body.ms-site div.product .woocommerce-tabs ul.tabs li a:hover {
+	color: var(--ms-ink) !important;
+	box-shadow: inset 0 -3px 0 0 var(--ms-yellow);
+}
+
+body.ms-site div.product .woocommerce-tabs .panel {
+	max-width: 72ch;
+	margin: 0 0 40px !important;
+	padding: 0 !important;
+}
+
+body.ms-site table.shop_attributes {
+	width: 100%;
+	max-width: 560px;
+	margin: 0;
+	border: 0 !important;
+	border-top: 1px solid var(--ms-rule) !important;
+	border-collapse: collapse;
+}
+
+body.ms-site table.shop_attributes th,
+body.ms-site table.shop_attributes td {
+	padding: 12px 0 !important;
+	border: 0 !important;
+	border-bottom: 1px solid var(--ms-rule) !important;
+	background: transparent !important;
+	font-style: normal !important;
+	text-align: start;
+}
+
+body.ms-site table.shop_attributes th {
+	width: 40%;
+	font-weight: 600;
+}
+
+body.ms-site table.shop_attributes td p {
+	margin: 0;
+	padding: 0 !important;
+}
+
+/* Reviews on a product */
+
+body.ms-site #reviews #comments ol.commentlist {
+	padding: 0;
+}
+
+body.ms-site #reviews #comments ol.commentlist li .comment-text {
+	border: 0 !important;
+	border-inline-start: 2px solid var(--ms-yellow) !important;
+	border-radius: 0 !important;
+}
+
+body.ms-site #reviews #comments ol.commentlist li img.avatar {
+	border-radius: 0;
+	border: 0;
+	background: var(--ms-sand);
+}
+
+/* Related products */
+
+body.ms-site div.product .related > h2,
+body.ms-site div.product .upsells > h2,
+body.ms-site .cross-sells > h2 {
+	margin: 24px 0 clamp(20px, 3vw, 32px);
+	font-size: clamp(1.5rem, 1.2rem + 1.3vw, 2.125rem);
+	line-height: 1.05;
+	letter-spacing: -0.03em;
+	text-transform: lowercase;
+}
+
+@media (min-width: 900px) {
+	body.ms-site div.product {
+		display: grid;
+		grid-template-columns: minmax(0, 1.05fr) minmax(0, 0.95fr);
+		column-gap: clamp(32px, 5vw, 72px);
+		align-items: start;
+	}
+
+	body.ms-site div.product > * {
+		grid-column: 1 / -1;
+	}
+
+	body.ms-site div.product > div.images {
+		grid-column: 1;
+	}
+
+	body.ms-site div.product > div.summary {
+		grid-column: 2;
+	}
+}
+
+/* 17. Account and forms ---------------------------------------------------- */
+
+body.ms-site form.login,
+body.ms-site form.register,
+body.ms-site form.checkout_coupon,
+body.ms-site form.lost_reset_password {
+	max-width: 520px;
+	margin: 0 0 32px !important;
+	padding: 24px !important;
+	border: 1px solid var(--ms-rule) !important;
+	border-radius: 0 !important;
+	background: var(--ms-white);
+}
+
+.ms-social-login {
+	margin-top: 20px;
+	padding-top: 20px;
+	border-top: 1px solid var(--ms-rule);
+}
+
+.ms-social-login:empty {
+	display: none;
+}
+
+body.ms-site form .form-row label {
+	line-height: 1.6;
+}
+
+body.ms-site form .form-row .input-text,
+body.ms-site form .form-row select {
+	width: 100%;
+}
+
+body.ms-site .woocommerce-MyAccount-navigation ul {
+	margin: 0 0 32px;
+	padding: 0;
+	border-top: 1px solid var(--ms-rule);
+	list-style: none;
+}
+
+body.ms-site .woocommerce-MyAccount-navigation li {
+	border-bottom: 1px solid var(--ms-rule);
+}
+
+body.ms-site .woocommerce-MyAccount-navigation a {
+	display: block;
+	padding: 12px 0;
+	font-weight: 600;
+	text-decoration: none;
+	box-shadow: inset 0 0 0 0 var(--ms-yellow);
+	transition: box-shadow 0.15s ease, padding 0.15s ease;
+}
+
+body.ms-site .woocommerce-MyAccount-navigation li.is-active a,
+body.ms-site .woocommerce-MyAccount-navigation a:hover {
+	padding-inline-start: 14px;
+	box-shadow: inset 3px 0 0 0 var(--ms-yellow);
+}
+
+body.ms-site table.shop_table {
+	border: 0 !important;
+	border-top: 1px solid var(--ms-rule) !important;
+	border-radius: 0 !important;
+	border-collapse: collapse;
+}
+
+body.ms-site table.shop_table th,
+body.ms-site table.shop_table td {
+	padding: 12px 12px 12px 0;
+	border: 0 !important;
+	border-bottom: 1px solid var(--ms-rule) !important;
+	text-align: start;
+}
+
+body.ms-site .select2-container--default .select2-selection--single {
+	height: 48px;
+	border: 1px solid var(--ms-ink);
+	border-radius: 0;
+}
+
+body.ms-site .select2-container--default .select2-selection--single .select2-selection__rendered {
+	padding-inline: 14px 36px;
+	color: var(--ms-ink);
+	line-height: 46px;
+}
+
+body.ms-site .select2-container--default .select2-selection--single .select2-selection__arrow {
+	height: 46px;
+}
+
+/* 18. Cart and checkout (WooCommerce blocks) ------------------------------- */
+
+body.ms-site .wc-block-components-button:not(.is-link) {
+	min-height: 52px;
+	border-radius: 0 !important;
+	background-color: var(--ms-ink) !important;
+	color: var(--ms-white) !important;
+	font-weight: 600;
+	box-shadow: inset 0 0 0 0 var(--ms-yellow);
+	transition: box-shadow 0.15s ease;
+}
+
+body.ms-site .wc-block-components-button:not(.is-link):hover {
+	box-shadow: inset 0 -5px 0 0 var(--ms-yellow);
+}
+
+body.ms-site .wc-block-components-text-input input,
+body.ms-site .wc-block-components-textarea,
+body.ms-site .wc-blocks-components-select .wc-blocks-components-select__container,
+body.ms-site .wc-blocks-components-select .wc-blocks-components-select__select,
+body.ms-site .wc-block-components-quantity-selector,
+body.ms-site .wc-block-components-radio-control-accordion-option,
+body.ms-site .wc-block-components-notice-banner,
+body.ms-site .wc-block-components-totals-coupon__input input {
+	border-radius: 0 !important;
+}
+
+body.ms-site .wc-block-components-product-name,
+body.ms-site .wc-block-components-totals-item__label {
+	color: var(--ms-ink);
+}
+
+body.ms-site .wc-block-components-product-name {
+	font-weight: 600;
+	text-decoration: none;
+}
+
+body.ms-site .wc-block-cart-item__image img,
+body.ms-site .wc-block-components-order-summary-item__image img {
+	border-radius: 0 !important;
+	background: var(--ms-sand);
+}
+
+/* 19. Info page and missing page ------------------------------------------- */
+
+.ms-info {
+	padding-top: clamp(36px, 6vw, 80px);
+}
+
+.ms-info__card {
+	display: grid;
+	grid-template-columns: auto auto minmax(0, 1fr);
+	gap: clamp(16px, 3vw, 40px);
+	align-items: stretch;
+	max-width: 880px;
+}
+
+.ms-info__symbol {
+	display: block;
+	width: clamp(64px, 15vw, 168px);
+	height: auto;
+	align-self: start;
+	background: var(--ms-white);
+}
+
+.ms-info__details .ms-pagetitle {
+	margin-bottom: 14px;
+}
+
+.ms-info__note {
+	max-width: 44ch;
+	margin: 0 0 24px;
+	color: var(--ms-graphite);
+	font-size: 18px;
+}
+
+.ms-contact--info {
+	gap: 14px;
+	font-size: 17px;
+	font-weight: 600;
+}
+
+.ms-social--info {
+	margin-top: 24px;
+}
+
+.ms-info__details .ms-content {
+	margin-top: 24px;
+}
+
+.ms-info__actions {
+	margin: 32px 0 0;
+}
+
+.ms-notfound {
+	padding-top: clamp(40px, 8vw, 96px);
+}
+
+/* WhatsApp button in the corner of every page */
+
+.ms-whatsapp {
+	position: fixed;
+	inset-inline-end: 12px;
+	bottom: 12px;
+	z-index: 55;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	width: 44px;
+	height: 44px;
+	background: var(--ms-yellow);
+	color: var(--ms-ink);
+	box-shadow: 0 0 0 2px var(--ms-ink);
+	transition: box-shadow 0.15s ease;
+}
+
+.ms-whatsapp:hover {
+	box-shadow: 0 0 0 4px var(--ms-ink);
+}
+
+.ms-whatsapp svg {
+	display: block;
+	width: 24px;
+	height: 24px;
+	fill: currentColor;
+}
+
+@media (min-width: 1024px) {
+	.ms-whatsapp {
+		inset-inline-end: 20px;
+		bottom: 20px;
+	}
+}
+
+/* 20. Motion --------------------------------------------------------------- */
+
+@media (prefers-reduced-motion: reduce) {
+	html {
+		scroll-behavior: auto;
+	}
+
+	*,
+	*::before,
+	*::after {
+		transition: none !important;
+		animation: none !important;
+	}
+}
