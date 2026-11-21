@@ -79,9 +79,15 @@ No production credentials are requested at this stage. Items 1 to 3 unblock the 
    CyberSource extension tables (structure only). This gives the real table prefix, engines of the
    six legacy tables, the CyberSource table names and the actual COD / pickup extension status.
    Replace any customer or order data with synthetic rows before sending.
-3. **A staging database I may write to**: either MariaDB on your machine via Remote Control, or
-   permission to install MariaDB in this cloud container and load the sanitised dump there.
-   PHP 8.3 with mysqli is already present here; MariaDB is not.
+3. **A staging database I may write to**: done in this cloud container on 2026-11-21.
+   MariaDB 10.11.14 (Ubuntu package) runs on 127.0.0.1:3306 with a scratchpad data directory,
+   database `cut_staging`, and the sidecar schema from `schema.py --prefix oc_` applied (pilot
+   disabled). The transport rehearsal (`transport_rehearsal.php`) passed against it: DDL rejected
+   inside a cut transaction, commit/rollback/retire on one connection, only the committed row
+   persisted, pickup-confirmation classification correct. The official MariaDB 11.8 repository is
+   blocked by this environment's network policy; production is 11.8.x, so the InnoDB conversion
+   rehearsal should be repeated on an 11.8 instance before the production window.
+   The container is ephemeral: the instance must be recreated in a new session.
 4. **Confirmations from you (text answers are enough)**: Journal3 exact version, Improved Options
    version, OpenCart build (handoff says 3.0.4.0), MariaDB release (preflight said 11.8.10),
    whether product 2594 has stock tracking on, and the intended workshop mailbox.
